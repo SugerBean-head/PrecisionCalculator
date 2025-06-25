@@ -1,0 +1,86 @@
+{
+  "summary": {
+    "summary": {
+      "total": 18,
+      "passed": 9,
+      "failed": 9,
+      "skipped": 0,
+      "successRate": "50.00%",
+      "totalTime": "375ms",
+      "avgPerformance": "1.00ms",
+      "coverageRate": "100.00%"
+    },
+    "errors": [
+      {
+        "testName": "除零测试",
+        "error": "断言失败: 除零应该抛出异常\n期望异常: zero\n实际异常: 除数不能为零",
+        "duration": 1
+      },
+      {
+        "testName": "极小数测试",
+        "error": "断言失败: 极小数加法\n期望: 2e-15 (±1e-16)\n实际: 0\n差值: 2e-15",
+        "duration": 0
+      },
+      {
+        "testName": "零值测试",
+        "error": "calc.power is not a function",
+        "duration": 0
+      },
+      {
+        "testName": "幂运算测试",
+        "error": "calc.power is not a function",
+        "duration": 0
+      },
+      {
+        "testName": "阶乘异常测试",
+        "error": "断言失败: 负数阶乘应该抛出异常\n期望异常: Invalid\n实际异常: 阶乘只能计算非负整数",
+        "duration": 0
+      },
+      {
+        "testName": "货币格式化测试",
+        "error": "calc.formatCurrency is not a function",
+        "duration": 0
+      },
+      {
+        "testName": "百分比格式化测试",
+        "error": "calc.formatPercentage is not a function",
+        "duration": 0
+      },
+      {
+        "testName": "大量计算压力测试",
+        "error": "PrecisionCalculator.add is not a function",
+        "duration": 0
+      },
+      {
+        "testName": "内存使用测试",
+        "error": "PrecisionCalculator.multiply is not a function",
+        "duration": 0
+      }
+    ],
+    "performance": [
+      {
+        "testName": "加法测试",
+        "duration": 1
+      },
+      {
+        "testName": "除零测试",
+        "duration": 1
+      },
+      {
+        "testName": "精度边界测试",
+        "duration": 1
+      }
+    ],
+    "coverage": {
+      "add": true,
+      "subtract": true,
+      "multiply": true,
+      "divide": true,
+      "sqrt": true,
+      "factorial": true
+    }
+  },
+  "benchmarks": [],
+  "timestamp": "2025-06-25T02:20:38.642Z",
+  "totalTime": 374
+}

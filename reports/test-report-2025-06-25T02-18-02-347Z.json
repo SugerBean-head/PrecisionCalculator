@@ -1,0 +1,31 @@
+{
+  "summary": {
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "successRate": "0.00%",
+      "totalTime": "3ms",
+      "avgPerformance": "2.00ms",
+      "coverageRate": "0%"
+    },
+    "errors": [
+      {
+        "testName": "测试套件运行",
+        "error": "EnhancedCalculator is not a constructor",
+        "duration": 2
+      }
+    ],
+    "performance": [
+      {
+        "testName": "测试套件运行",
+        "duration": 2
+      }
+    ],
+    "coverage": {}
+  },
+  "benchmarks": [],
+  "timestamp": "2025-06-25T02:18:02.347Z",
+  "totalTime": 2
+}

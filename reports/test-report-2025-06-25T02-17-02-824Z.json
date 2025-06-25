@@ -1,0 +1,19 @@
+{
+  "summary": {
+    "summary": {
+      "total": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "successRate": "NaN%",
+      "totalTime": "4ms",
+      "avgPerformance": "0ms",
+      "coverageRate": "0%"
+    },
+    "errors": [],
+    "performance": [],
+    "coverage": {}
+  },
+  "benchmarks": [],
+  "timestamp": "2025-06-25T02:17:02.823Z"
+}

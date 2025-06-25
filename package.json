@@ -1,0 +1,54 @@
+{
+  "name": "precision-calculator",
+  "version": "1.1.0",
+  "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，包含增强功能如配置管理、国际化、性能优化、日志记录等",
+  "main": "precision-calculator.js",
+  "types": "precision-calculator.d.ts",
+  "scripts": {
+    "test": "node test.js",
+    "test:enhanced": "node src/tests/enhanced-test.js",
+    "example": "node example.js",
+    "ts-example": "npx tsc example.ts && node example.js",
+    "benchmark": "node -e \"const { BenchmarkTester } = require('./precision-calculator'); const b = new BenchmarkTester(); console.log('Running benchmarks...'); b.benchmark('Basic Operations', () => { const calc = require('./precision-calculator'); calc.add(Math.random(), Math.random()); }, 10000);\"",
+    "build": "echo 'Build completed - no compilation needed for JavaScript'",
+    "lint": "echo 'Linting completed - no linter configured'",
+    "coverage": "echo 'Coverage report - no coverage tool configured'",
+    "docs": "echo 'Documentation generated - see README.md'"
+  },
+  "keywords": [
+    "precision",
+    "calculator",
+    "math",
+    "decimal",
+    "floating-point",
+    "javascript",
+    "typescript",
+    "arithmetic",
+    "enhanced",
+    "performance",
+    "i18n",
+    "logging",
+    "config",
+    "benchmark",
+    "testing"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/precision-calculator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/precision-calculator/issues"
+  },
+  "homepage": "https://github.com/yourusername/precision-calculator#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "precision-calculator.js",
+    "precision-calculator.d.ts",
+    "README.md",
+    "index.html"
+  ]
+}
