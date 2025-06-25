@@ -1,13 +1,13 @@
 /**
  * ES模块导入方式演示
- * 展示precision-calculator支持的各种import语法
+ * 展示mathfix支持的各种import语法
  */
 
-console.log('=== Precision Calculator ES模块导入方式演示 ===\n');
+console.log('=== Mathfix ES模块导入方式演示 ===\n');
 
 // 方式1: 命名导入 - 最常用的方式
 console.log('1. 命名导入 (Named Imports):');
-import { PrecisionCalculator, calc, batch } from '../precision-calculator.mjs';
+import { PrecisionCalculator, calc, batch } from '../mathfix.mjs';
 
 const calculator1 = new PrecisionCalculator();
 console.log('  calc.add(0.1, 0.2) =', calc.add(0.1, 0.2));
@@ -15,7 +15,7 @@ console.log('  batch(["1+2", "2*3", "4/2"]) =', batch(['1+2', '2*3', '4/2']));
 
 // 方式2: 默认导入
 console.log('\n2. 默认导入 (Default Import):');
-import precisionCalc from '../precision-calculator.mjs';
+import precisionCalc from '../mathfix.mjs';
 
 const calculator2 = new precisionCalc.PrecisionCalculator();
 console.log('  使用默认导入:', calculator2.multiply(0.2, 3));
@@ -23,7 +23,7 @@ console.log('  版本信息:', precisionCalc.version);
 
 // 方式3: 混合导入
 console.log('\n3. 混合导入 (Mixed Import):');
-import defaultExport, { ChainableCalculator, getPerformanceMetrics } from '../precision-calculator.mjs';
+import defaultExport, { ChainableCalculator, getPerformanceMetrics } from '../mathfix.mjs';
 
 const chainCalc = new ChainableCalculator(10);
 const chainResult = chainCalc.add(5).multiply(2).subtract(3).valueOf();
@@ -31,7 +31,7 @@ console.log('  链式计算 (10+5)*2-3 =', chainResult);
 
 // 方式4: 命名空间导入
 console.log('\n4. 命名空间导入 (Namespace Import):');
-import * as PC from '../precision-calculator.mjs';
+import * as PC from '../mathfix.mjs';
 
 const calculator4 = new PC.PrecisionCalculator();
 console.log('  PC.calc.divide(1.21, 1.1) =', PC.calc.divide(1.21, 1.1));
@@ -43,7 +43,7 @@ import {
   PrecisionCalculator as Calculator, 
   calc as mathCalc,
   version as libVersion 
-} from '../precision-calculator.mjs';
+} from '../mathfix.mjs';
 
 const calculator5 = new Calculator();
 console.log('  重命名后使用:', mathCalc.subtract(1.4, 0.2));

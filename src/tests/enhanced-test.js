@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 导入依赖模块
-const mainModule = require('../../precision-calculator.js');
+const mainModule = require('../../mathfix.js');
 const {
   PrecisionCalculator,
   EnhancedCalculator,

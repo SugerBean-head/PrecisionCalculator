@@ -5,8 +5,13 @@ test.js
 # README.md
 # 开发和测试文件
 test.js
+test-es-imports.mjs
 example.ts
 tsconfig.json
+demo.js
+examples/
+reports/
+src/tests/
 
 # 版本控制
 .git/

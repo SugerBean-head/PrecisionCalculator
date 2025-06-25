@@ -1,13 +1,13 @@
 /**
  * ES Module version of Precision Calculator
  * 精度计算工具类 - ES模块版本
- * 支持 import { PrecisionCalculator, calc } from "precision-calculator" 语法
+ * 支持 import { PrecisionCalculator, calc } from "mathfix" 语法
  */
 
 // 导入CommonJS版本的所有功能
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const precisionCalculator = require('./precision-calculator.js');
+const precisionCalculator = require('./mathfix.js');
 
 // 解构所有导出的功能
 const {
@@ -70,18 +70,18 @@ export default {
  * 使用示例:
  * 
  * // 命名导入
- * import { PrecisionCalculator, calc } from "precision-calculator";
+ * import { PrecisionCalculator, calc } from "mathfix";
  * const calculator = new PrecisionCalculator();
  * console.log(calc.add(0.1, 0.2)); // 0.3
  * 
  * // 默认导入
- * import precisionCalc from "precision-calculator";
+ * import precisionCalc from "mathfix";
  * const calculator = new precisionCalc.PrecisionCalculator();
  * 
  * // 混合导入
- * import precisionCalc, { calc, batch } from "precision-calculator";
+ * import precisionCalc, { calc, batch } from "mathfix";
  * 
  * // 全部导入
- * import * as PC from "precision-calculator";
+ * import * as PC from "mathfix";
  * const calculator = new PC.PrecisionCalculator();
  */

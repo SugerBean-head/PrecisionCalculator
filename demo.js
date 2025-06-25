@@ -11,7 +11,7 @@ const {
   setConfig,
   getConfig,
   setLocale
-} = require('./precision-calculator.js');
+} = require('./mathfix.js');
 
 console.log('🚀 精度计算器演示开始...');
 console.log('=' .repeat(50));

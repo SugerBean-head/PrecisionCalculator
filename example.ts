@@ -21,7 +21,7 @@ import {
   setConfig,
   getConfig,
   setLocale
-} from './precision-calculator';
+} from './mathfix';
 
 // 基础运算示例
 const basicCalculations = () => {

@@ -1,10 +1,10 @@
 /**
  * ES模块使用示例
- * 演示如何使用 import { xxx } from "precision-calculator" 语法
+ * 演示如何使用 import { xxx } from "mathfix" 语法
  */
 
 // 方式1: 命名导入 - 导入特定功能
-import { PrecisionCalculator, calc, EnhancedCalculator, ChainableCalculator } from '../precision-calculator.mjs';
+import { PrecisionCalculator, calc, EnhancedCalculator, ChainableCalculator } from '../mathfix.mjs';
 
 console.log('=== ES模块导入示例 ===\n');
 
@@ -47,16 +47,16 @@ export const moduleType = 'ES Module';
  * 其他导入方式示例:
  * 
  * // 方式2: 默认导入
- * import precisionCalc from '../precision-calculator.mjs';
+ * import precisionCalc from '../mathfix.mjs';
  * const calc = new precisionCalc.PrecisionCalculator();
  * 
  * // 方式3: 混合导入
- * import precisionCalc, { calc, batch } from '../precision-calculator.mjs';
+ * import precisionCalc, { calc, batch } from '../mathfix.mjs';
  * 
  * // 方式4: 全部导入
- * import * as PC from '../precision-calculator.mjs';
+ * import * as PC from '../mathfix.mjs';
  * const calculator = new PC.PrecisionCalculator();
  * 
  * // 方式5: 动态导入
- * const { PrecisionCalculator } = await import('../precision-calculator.mjs');
+ * const { PrecisionCalculator } = await import('../mathfix.mjs');
  */

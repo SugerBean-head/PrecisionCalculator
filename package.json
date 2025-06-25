@@ -1,16 +1,16 @@
 {
-  "name": "precision-calculator",
+  "name": "mathfix",
   "version": "1.1.0",
   "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，包含增强功能如配置管理、国际化、性能优化、日志记录等",
-  "main": "precision-calculator.js",
-  "module": "precision-calculator.mjs",
-  "types": "precision-calculator.d.ts",
+  "main": "mathfix.js",
+  "module": "mathfix.mjs",
+  "types": "mathfix.d.ts",
   "type": "commonjs",
   "exports": {
     ".": {
-      "import": "./precision-calculator.mjs",
-      "require": "./precision-calculator.js",
-      "types": "./precision-calculator.d.ts"
+      "import": "./mathfix.mjs",
+      "require": "./mathfix.js",
+      "types": "./mathfix.d.ts"
     }
   },
   "scripts": {
@@ -18,7 +18,7 @@
     "test:enhanced": "node src/tests/enhanced-test.js",
     "example": "node example.js",
     "ts-example": "npx tsc example.ts && node example.js",
-    "benchmark": "node -e \"const { BenchmarkTester } = require('./precision-calculator'); const b = new BenchmarkTester(); console.log('Running benchmarks...'); b.benchmark('Basic Operations', () => { const calc = require('./precision-calculator'); calc.add(Math.random(), Math.random()); }, 10000);\"",
+    "benchmark": "node -e \"const { BenchmarkTester } = require('./mathfix'); const b = new BenchmarkTester(); console.log('Running benchmarks...'); b.benchmark('Basic Operations', () => { const calc = require('./mathfix'); calc.add(Math.random(), Math.random()); }, 10000);\"",
     "build": "echo 'Build completed - no compilation needed for JavaScript'",
     "lint": "echo 'Linting completed - no linter configured'",
     "coverage": "echo 'Coverage report - no coverage tool configured'",
@@ -41,23 +41,23 @@
     "benchmark",
     "testing"
   ],
-  "author": "Your Name",
+  "author": "Developer",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/precision-calculator.git"
+    "url": "https://github.com/developer/mathfix.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/precision-calculator/issues"
+    "url": "https://github.com/developer/mathfix/issues"
   },
-  "homepage": "https://github.com/yourusername/precision-calculator#readme",
+  "homepage": "https://github.com/developer/mathfix#readme",
   "engines": {
     "node": ">=12.0.0"
   },
   "files": [
-    "precision-calculator.js",
-    "precision-calculator.mjs",
-    "precision-calculator.d.ts",
+    "mathfix.js",
+    "mathfix.mjs",
+    "mathfix.d.ts",
     "README.md",
     "index.html"
   ]

@@ -1,5 +1,5 @@
 // 简单的测试文件
-const { calc } = require('./precision-calculator.js');
+const { calc } = require('./mathfix.js');
 
 console.log('=== Precision Calculator Tests ===\n');
 
@@ -44,6 +44,6 @@ console.log('');
 
 console.log('✅ 所有测试完成!');
 console.log('\n使用方法:');
-console.log('const { calc } = require(\'precision-calculator\');');
+console.log('const { calc } = require(\'mathfix\');');
 console.log('console.log(calc.add(0.1, 0.2)); // 0.3');
 console.log('console.log(calc.chain(100).add(50).multiply(1.08).valueOf()); // 162');

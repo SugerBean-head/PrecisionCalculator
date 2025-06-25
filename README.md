@@ -6,11 +6,11 @@
 
 ### NPM 安装
 ```bash
-npm install precision-calculator
+npm install mathfix
 ```
 
 ### 直接下载
-下载 `precision-calculator.js` 文件直接使用。
+下载 `mathfix.js` 文件直接使用。
 
 ## 🌟 特性
 
@@ -40,22 +40,22 @@ npm install precision-calculator
 ### ES模块导入 (推荐)
 ```javascript
 // 命名导入 - 最常用的方式
-import { PrecisionCalculator, calc, ChainableCalculator } from 'precision-calculator';
+import { PrecisionCalculator, calc, ChainableCalculator } from 'mathfix';
 
 // 默认导入
-import precisionCalc from 'precision-calculator';
+import precisionCalc from 'mathfix';
 
 // 混合导入
-import defaultExport, { calc, batch } from 'precision-calculator';
+import defaultExport, { calc, batch } from 'mathfix';
 
 // 命名空间导入
-import * as PC from 'precision-calculator';
+import * as PC from 'mathfix';
 
 // 重命名导入
 import { 
   PrecisionCalculator as Calculator, 
   calc as mathCalc 
-} from 'precision-calculator';
+} from 'mathfix';
 
 // 基础运算
 console.log(calc.add(0.1, 0.2));        // 0.3
@@ -66,8 +66,8 @@ console.log(calc.divide(0.3, 0.1));     // 3
 
 ### CommonJS 导入
 ```javascript
-const { calc } = require('precision-calculator');
-// 或者导入其他类: const { PrecisionCalculator, ChainableCalculator } = require('precision-calculator');
+const { calc } = require('mathfix');
+// 或者导入其他类: const { PrecisionCalculator, ChainableCalculator } = require('mathfix');
 
 // 基础运算
 console.log(calc.add(0.1, 0.2));        // 0.3
@@ -98,7 +98,7 @@ const {
   setLocale, 
   batch,
   getPerformanceMetrics 
-} = require('precision-calculator');
+} = require('mathfix');
 
 // 1. 配置管理
 setConfig({
@@ -139,7 +139,7 @@ console.log(`缓存命中率: ${(metrics.cacheHitRate * 100).toFixed(2)}%`);
 ### TypeScript 环境
 
 ```typescript
-import { calc, PrecisionCalculator, ChainableCalculator } from 'precision-calculator';
+import { calc, PrecisionCalculator, ChainableCalculator } from 'mathfix';
 
 // 类型安全的基础运算
 const sum: number = calc.add(0.1, 0.2);        // 0.3
@@ -171,7 +171,7 @@ const precise: number = calculator.add(0.1, 0.2);
 
 ### 浏览器环境
 ```html
-<script src="precision-calculator.js"></script>
+<script src="mathfix.js"></script>
 <script>
     console.log(calc.add(0.1, 0.2)); // 0.3
     console.log(calc.multiply(0.1, 3)); // 0.3
@@ -184,9 +184,9 @@ const precise: number = calculator.add(0.1, 0.2);
 ## 文件结构
 
 ```
-precision-calculator/
-├── precision-calculator.js     # 主库文件（包含增强功能）
-├── precision-calculator.d.ts   # TypeScript类型定义（增强版）
+mathfix/
+├── mathfix.js     # 主库文件（包含增强功能）
+├── mathfix.d.ts   # TypeScript类型定义（增强版）
 ├── example.ts                  # TypeScript使用示例（增强版）
 ├── tsconfig.json              # TypeScript配置
 ├── test.js                    # 基础测试文件
@@ -776,7 +776,7 @@ calculator.reset(200).subtract(50).divide(3); // 50
 
 ### 创建自定义计算器实例
 ```javascript
-const { PrecisionCalculator } = require('./precision-calculator.js');
+const { PrecisionCalculator } = require('./mathfix.js');
 
 const myCalculator = new PrecisionCalculator();
 myCalculator.setPrecision(6);
@@ -949,8 +949,8 @@ const config = {
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/precision-calculator.git
-cd precision-calculator
+git clone https://github.com/your-username/mathfix.git
+cd mathfix
 
 # 安装依赖（如果有）
 npm install
