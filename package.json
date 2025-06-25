@@ -3,7 +3,16 @@
   "version": "1.1.0",
   "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，包含增强功能如配置管理、国际化、性能优化、日志记录等",
   "main": "precision-calculator.js",
+  "module": "precision-calculator.mjs",
   "types": "precision-calculator.d.ts",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": "./precision-calculator.mjs",
+      "require": "./precision-calculator.js",
+      "types": "./precision-calculator.d.ts"
+    }
+  },
   "scripts": {
     "test": "node test.js",
     "test:enhanced": "node src/tests/enhanced-test.js",
@@ -47,6 +56,7 @@
   },
   "files": [
     "precision-calculator.js",
+    "precision-calculator.mjs",
     "precision-calculator.d.ts",
     "README.md",
     "index.html"

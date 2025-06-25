@@ -37,7 +37,34 @@ npm install precision-calculator
 
 ## 🚀 快速开始
 
-### Node.js 环境
+### ES模块导入 (推荐)
+```javascript
+// 命名导入 - 最常用的方式
+import { PrecisionCalculator, calc, ChainableCalculator } from 'precision-calculator';
+
+// 默认导入
+import precisionCalc from 'precision-calculator';
+
+// 混合导入
+import defaultExport, { calc, batch } from 'precision-calculator';
+
+// 命名空间导入
+import * as PC from 'precision-calculator';
+
+// 重命名导入
+import { 
+  PrecisionCalculator as Calculator, 
+  calc as mathCalc 
+} from 'precision-calculator';
+
+// 基础运算
+console.log(calc.add(0.1, 0.2));        // 0.3
+console.log(calc.subtract(0.3, 0.1));   // 0.2
+console.log(calc.multiply(0.2, 3));     // 0.6
+console.log(calc.divide(0.3, 0.1));     // 3
+```
+
+### CommonJS 导入
 ```javascript
 const { calc } = require('precision-calculator');
 // 或者导入其他类: const { PrecisionCalculator, ChainableCalculator } = require('precision-calculator');
