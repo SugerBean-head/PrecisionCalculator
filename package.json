@@ -1,6 +1,6 @@
 {
   "name": "mathfix",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，包含增强功能如配置管理、国际化、性能优化、日志记录等",
   "main": "mathfix.js",
   "module": "mathfix.mjs",
