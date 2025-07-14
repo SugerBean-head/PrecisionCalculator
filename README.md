@@ -63,19 +63,23 @@ npm install mathfix
 
 ```javascript
 // 导入核心计算对象
-import { calc } from "mathfix";
+import { calc, rawCalc } from "mathfix";
 
-// 基础运算
+// 基础运算（应用全局配置的精度）
 console.log(calc.add(0.1, 0.2)); // 0.3
 console.log(calc.subtract(0.3, 0.1)); // 0.2
 console.log(calc.multiply(0.2, 3)); // 0.6
 console.log(calc.divide(0.3, 0.1)); // 3
 
-// 处理无限循环小数
-console.log(calc.divide(1, 3)); // 0.3333333333333333
-// 使用 format 或 round 控制精度
-console.log(calc.format(calc.divide(1, 3), 2)); // "0.33"
-console.log(calc.round(calc.divide(1, 3), 4)); // 0.3333
+// 原始计算（不经过全局配置处理）
+console.log(rawCalc.divide(1, 3)); // 0.3333333333333333 (完整精度)
+console.log(calc.divide(1, 3)); // 根据setConfig配置的精度显示
+
+// 对比原始值和配置处理后的值
+import { setConfig } from "mathfix";
+setConfig({ precision: { default: 4 } });
+console.log('原始值:', rawCalc.divide(1, 3)); // 0.3333333333333333
+console.log('配置后:', calc.divide(1, 3)); // 0.3333
 
 // 也可以导入其他模块
 import { PrecisionCalculator, ChainableCalculator } from "mathfix";
@@ -522,6 +526,41 @@ calc.getPerformanceMetrics()
 calc.clearCache()
 calc.getCacheStats()
 ```
+
+#### 原始值计算 (rawCalc) 🆕
+
+`rawCalc` 提供不经过全局配置处理的原始计算结果，适用于需要完整精度或自定义精度控制的场景。
+
+```javascript
+import { calc, rawCalc, setConfig } from "mathfix";
+
+// 设置全局精度配置
+setConfig({ precision: { default: 4 } });
+
+// 对比原始值和配置处理后的值
+console.log('原始值:', rawCalc.divide(1, 3)); // 0.3333333333333333
+console.log('配置后:', calc.divide(1, 3)); // 0.3333
+
+// 原始值适用场景
+// 1. 需要完整精度的科学计算
+const preciseResult = rawCalc.divide(22, 7); // 3.142857142857143
+
+// 2. 中间计算保持精度，最终结果再格式化
+const intermediate = rawCalc.multiply(rawCalc.divide(1, 3), 3); // 1
+const formatted = calc.format(intermediate, 2); // 1.00
+
+// 3. 自定义精度控制
+const customPrecision = rawCalc.format(rawCalc.divide(1, 3), 6); // 0.333333
+
+// 4. 避免配置影响的独立计算
+const independent = rawCalc.add(0.1, 0.2); // 0.30000000000000004 (原始JavaScript结果)
+const corrected = calc.add(0.1, 0.2); // 0.3 (精度修正后)
+```
+
+**使用建议：**
+- 使用 `calc` 进行日常计算，享受全局配置的便利
+- 使用 `rawCalc` 进行需要完整精度的科学计算或中间计算
+- 在库开发中使用 `rawCalc` 避免用户配置的影响
 
 #### 链式计算器
 

@@ -169,9 +169,14 @@ export interface CalcInterface {
 }
 
 /**
- * 主要导出的calc对象
+ * 主要导出的calc对象（应用全局配置）
  */
 export declare const calc: CalcInterface;
+
+/**
+ * 原始计算对象（不经过全局配置处理）
+ */
+export declare const rawCalc: CalcInterface;
 
 // 配置相关类型
 export interface ConfigOptions {

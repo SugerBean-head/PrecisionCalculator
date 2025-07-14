@@ -1,26 +1,61 @@
-/**
- * 精度计算工具类
- * 解决JavaScript浮点数计算精度问题，支持公式计算和负号处理
- * 提供精确的四则运算、数值格式化、取整舍入等功能
- * @class PrecisionCalculator
- * @author Precision Calculator Team
- * @version 1.1.0
- * 
- * 新增功能:
- * - 模块化架构
- * - 配置管理
- * - 国际化支持
- * - 增强错误处理
- * - 性能优化
- * - 日志记录
- * - 链式调用
- * - 批量计算
- * @example
- * const calc = new PrecisionCalculator();
- * calc.add(0.1, 0.2); // 0.3 (而不是 0.30000000000000004)
- * calc.calculate('0.1 + 0.2 * 3'); // 0.7
- */
-class PrecisionCalculator {
+// 导入共享的核心类和工具函数
+// 在Node.js环境中使用require，在浏览器环境中通过全局变量访问
+let PrecisionCalculator, ChainableCalculator, setGlobalConfig, getGlobalConfig, getGlobalConfigRef;
+let utilsBatch, createRawCalc, createCalc, getPerformanceMetrics, clearCache, getCacheStats, setLocale, getInstance, version, features;
+
+// 尝试加载共享模块
+try {
+  if (typeof require !== 'undefined') {
+    // Node.js环境
+    const coreCalculator = require('./src/shared/core-calculator.js');
+    const configManager = require('./src/shared/config-manager.js');
+    const utils = require('./src/shared/utils.js');
+    
+    PrecisionCalculator = coreCalculator.PrecisionCalculator;
+    ChainableCalculator = coreCalculator.ChainableCalculator;
+    setGlobalConfig = configManager.setConfig;
+    getGlobalConfig = configManager.getConfig;
+    getGlobalConfigRef = configManager.getGlobalConfigRef;
+    
+    utilsBatch = utils.batch;
+    createRawCalc = utils.createRawCalc;
+    createCalc = utils.createCalc;
+    getPerformanceMetrics = utils.getPerformanceMetrics;
+    clearCache = utils.clearCache;
+    getCacheStats = utils.getCacheStats;
+    setLocale = utils.setLocale;
+    getInstance = utils.getInstance;
+    version = utils.version;
+    features = utils.features;
+  } else {
+    // 浏览器环境 - 使用内联定义作为后备
+    throw new Error('使用内联定义');
+  }
+} catch (error) {
+  // 后备：内联定义核心类（保持向后兼容）
+  /**
+   * 精度计算工具类
+   * 解决JavaScript浮点数计算精度问题，支持公式计算和负号处理
+   * 提供精确的四则运算、数值格式化、取整舍入等功能
+   * @class PrecisionCalculator
+   * @author Precision Calculator Team
+   * @version 1.1.0
+   * 
+   * 新增功能:
+   * - 模块化架构
+   * - 配置管理
+   * - 国际化支持
+   * - 增强错误处理
+   * - 性能优化
+   * - 日志记录
+   * - 链式调用
+   * - 批量计算
+   * @example
+   * const calc = new PrecisionCalculator();
+   * calc.add(0.1, 0.2); // 0.3 (而不是 0.30000000000000004)
+   * calc.calculate('0.1 + 0.2 * 3'); // 0.7
+   */
+  class PrecisionCalculatorFallback {
   /**
    * 创建精度计算器实例
    * @constructor
@@ -664,23 +699,48 @@ class PrecisionCalculator {
   percentage(num) {
     return this.divide(num, 100);
   }
+  }
+  
+  // 在后备模式下，将后备类赋值给主要变量
+  PrecisionCalculator = PrecisionCalculatorFallback;
+  
+  // 后备模式下的简单配置管理
+  const globalConfig = {
+    precision: {
+      default: 10
+    }
+  };
+  
+  setGlobalConfig = function(config) {
+    if (config.precision && typeof config.precision.default === 'number') {
+      globalConfig.precision.default = config.precision.default;
+    }
+  };
+  
+  getGlobalConfig = function(path, defaultValue) {
+    if (!path) return globalConfig;
+    const keys = path.split('.');
+    let value = globalConfig;
+    for (const key of keys) {
+      if (value && typeof value === 'object' && key in value) {
+        value = value[key];
+      } else {
+        return defaultValue;
+      }
+    }
+    return value;
+  };
+  
+  getGlobalConfigRef = function() {
+    return globalConfig;
+  };
 }
 
 // 创建默认实例
 const calculator = new PrecisionCalculator();
 
-/**
- * 支持链式调用的计算器类
- * 提供流畅的API接口，支持连续的数学运算和格式化操作
- * @class ChainableCalculator
- * @example
- * // 基础链式调用
- * calc.chain(10).add(5).multiply(2).subtract(3).valueOf(); // 27
- * 
- * // 链式调用 + 格式化
- * calc.chain(1234.567).round(2).toCurrency('$'); // "$1,234.57"
- */
-class ChainableCalculator {
+// ChainableCalculator 类已从共享模块导入，如果导入失败则使用后备实现
+class ChainableCalculatorFallback {
   /**
    * 创建链式计算器实例
    * @param {number} [value=0] - 初始值
@@ -1045,52 +1105,144 @@ class ChainableCalculator {
   }
 }
 
-/**
- * 精度计算工具对象
- * 提供便捷的静态方法进行精确数学计算和格式化
- * @namespace calc
- */
-const calc = {
+// 在后备模式下，将后备类赋值给主要变量
+if (!ChainableCalculator) {
+  ChainableCalculator = ChainableCalculatorFallback;
+}
+
+// 使用共享工具创建计算器对象，或使用后备实现
+let rawCalc, calc;
+
+if (createRawCalc && createCalc) {
+  // 使用共享工具函数
+  rawCalc = createRawCalc(calculator);
+  calc = createCalc(calculator, getGlobalConfigRef(), ChainableCalculator, getGlobalConfig);
+} else {
+  // 后备实现
   /**
-   * 精确加法运算
-   * @param {number} a - 被加数
-   * @param {number} b - 加数
-   * @returns {number} 精确的加法结果
-   * @example
-   * calc.add(0.1, 0.2); // 0.3 (而不是 0.30000000000000004)
+   * 原始计算器对象（不应用全局配置）
+   * 提供基础的精确数学计算功能
+   * @namespace rawCalc
    */
-  add: (a, b) => calculator.add(a, b),
-  
+  rawCalc = {
+    /**
+     * 精确加法运算
+     * @param {number} a - 被加数
+     * @param {number} b - 加数
+     * @returns {number} 精确的加法结果
+     * @example
+     * rawCalc.add(0.1, 0.2); // 0.3
+     */
+    add: (a, b) => calculator.add(a, b),
+    
+    /**
+     * 精确减法运算
+     * @param {number} a - 被减数
+     * @param {number} b - 减数
+     * @returns {number} 精确的减法结果
+     * @example
+     * rawCalc.subtract(0.3, 0.1); // 0.2
+     */
+    subtract: (a, b) => calculator.subtract(a, b),
+    
+    /**
+     * 精确乘法运算
+     * @param {number} a - 被乘数
+     * @param {number} b - 乘数
+     * @returns {number} 精确的乘法结果
+     * @example
+     * rawCalc.multiply(0.2, 0.2); // 0.04
+     */
+    multiply: (a, b) => calculator.multiply(a, b),
+    
+    /**
+     * 精确除法运算
+     * @param {number} a - 被除数
+     * @param {number} b - 除数
+     * @returns {number} 精确的除法结果
+     * @throws {Error} 当除数为0时抛出错误
+     * @example
+     * rawCalc.divide(0.3, 0.1); // 3
+     */
+    divide: (a, b) => calculator.divide(a, b),
+    
+    /**
+     * 解析并计算数学表达式
+     * @param {string} expression - 数学表达式字符串
+     * @returns {number} 计算结果
+     * @example
+     * rawCalc.calculate('0.1 + 0.2'); // 0.3
+     */
+    calculate: (expression) => calculator.calculate(expression),
+    
+    /**
+     * 获取计算器实例
+     * @returns {PrecisionCalculator} 计算器实例
+     */
+    getInstance: () => calculator
+  };
+}
+
+if (!calc) {
+  // 后备实现：精度计算工具对象（应用全局配置的默认精度）
   /**
-   * 精确减法运算
-   * @param {number} a - 被减数
-   * @param {number} b - 减数
-   * @returns {number} 精确的减法结果
-   * @example
-   * calc.subtract(0.3, 0.1); // 0.2 (而不是 0.19999999999999998)
+   * 精度计算工具对象（应用全局配置的默认精度）
+   * 提供便捷的静态方法进行精确数学计算和格式化
+   * @namespace calc
    */
-  subtract: (a, b) => calculator.subtract(a, b),
-  
-  /**
-   * 精确乘法运算
-   * @param {number} a - 被乘数
-   * @param {number} b - 乘数
-   * @returns {number} 精确的乘法结果
-   * @example
-   * calc.multiply(0.2, 0.2); // 0.04 (而不是 0.04000000000000001)
-   */
-  multiply: (a, b) => calculator.multiply(a, b),
-  
-  /**
-   * 精确除法运算
-   * @param {number} a - 被除数
-   * @param {number} b - 除数
-   * @returns {number} 精确的除法结果
-   * @throws {Error} 当除数为0时抛出错误
-   * @example
-   * calc.divide(0.3, 0.1); // 3 (而不是 2.9999999999999996)
-   */
-  divide: (a, b) => calculator.divide(a, b),
+  calc = {
+    /**
+     * 精确加法运算
+     * @param {number} a - 被加数
+     * @param {number} b - 加数
+     * @returns {number} 精确的加法结果
+     * @example
+     * calc.add(0.1, 0.2); // 0.3 (而不是 0.30000000000000004)
+     */
+    add: (a, b) => {
+      const result = calculator.add(a, b);
+      return calculator.format(result, getGlobalConfig('precision.default', 10));
+    },
+    
+    /**
+     * 精确减法运算
+     * @param {number} a - 被减数
+     * @param {number} b - 减数
+     * @returns {number} 精确的减法结果
+     * @example
+     * calc.subtract(0.3, 0.1); // 0.2 (而不是 0.19999999999999998)
+     */
+    subtract: (a, b) => {
+      const result = calculator.subtract(a, b);
+      return calculator.format(result, getGlobalConfig('precision.default', 10));
+    },
+    
+    /**
+     * 精确乘法运算
+     * @param {number} a - 被乘数
+     * @param {number} b - 乘数
+     * @returns {number} 精确的乘法结果
+     * @example
+     * calc.multiply(0.2, 0.2); // 0.04 (而不是 0.04000000000000001)
+     */
+    multiply: (a, b) => {
+      const result = calculator.multiply(a, b);
+      return calculator.format(result, getGlobalConfig('precision.default', 10));
+    },
+    
+    /**
+     * 精确除法运算
+     * @param {number} a - 被除数
+     * @param {number} b - 除数
+     * @returns {number} 精确的除法结果
+     * @throws {Error} 当除数为0时抛出错误
+     * @example
+     * calc.divide(0.3, 0.1); // 3 (而不是 2.9999999999999996)
+     */
+    divide: (a, b) => {
+      const result = calculator.divide(a, b);
+      return calculator.format(result, getGlobalConfig('precision.default', 10));
+    },
   
   /**
    * 解析并计算数学表达式
@@ -1121,7 +1273,10 @@ const calc = {
    * calc.square(0.5); // 0.25
    * calc.square(-3); // 9
    */
-  square: (num) => calculator.square(num),
+  square: (num) => {
+    const result = calculator.square(num);
+    return calculator.format(result, getGlobalConfig('precision.default', 10));
+  },
   
   /**
    * 计算数字的立方
@@ -1144,7 +1299,10 @@ const calc = {
    * calc.sqrt(2); // 1.4142135623730951
    * calc.sqrt(0.25); // 0.5
    */
-  sqrt: (num) => calculator.sqrt(num),
+  sqrt: (num) => {
+    const result = calculator.sqrt(num);
+    return calculator.format(result, getGlobalConfig('precision.default', 10));
+  },
   
   /**
    * 计算数字的开立方根
@@ -1180,7 +1338,10 @@ const calc = {
    * calc.abs(3.14); // 3.14
    * calc.abs(0); // 0
    */
-  abs: (num) => calculator.abs(num),
+  abs: (num) => {
+    const result = calculator.abs(num);
+    return calculator.format(result, getGlobalConfig('precision.default', 10));
+  },
   
   /**
    * 计算数字的对数（以10为底）
@@ -1265,35 +1426,35 @@ const calc = {
   /**
    * 四舍五入到指定精度
    * @param {number} num - 要舍入的数字
-   * @param {number} [precision=0] - 小数位数，默认为0（整数）
+   * @param {number} [precision] - 小数位数，默认使用全局配置
    * @returns {number} 舍入后的数字
    * @example
    * calc.round(3.14159, 2); // 3.14
    * calc.round(3.6); // 4
    */
-  round: (num, precision = 0) => calculator.round(num, precision),
+  round: (num, precision) => calculator.round(num, precision !== undefined ? precision : getGlobalConfig('precision.default', 10)),
   
   /**
    * 向上取整到指定精度
    * @param {number} num - 要取整的数字
-   * @param {number} [precision=0] - 小数位数，默认为0（整数）
+   * @param {number} [precision] - 小数位数，默认使用全局配置
    * @returns {number} 向上取整后的数字
    * @example
    * calc.ceil(3.14159, 2); // 3.15
    * calc.ceil(3.1); // 4
    */
-  ceil: (num, precision = 0) => calculator.ceil(num, precision),
+  ceil: (num, precision) => calculator.ceil(num, precision !== undefined ? precision : getGlobalConfig('precision.default', 10)),
   
   /**
    * 向下取整到指定精度
    * @param {number} num - 要取整的数字
-   * @param {number} [precision=0] - 小数位数，默认为0（整数）
+   * @param {number} [precision] - 小数位数，默认使用全局配置
    * @returns {number} 向下取整后的数字
    * @example
    * calc.floor(3.14159, 2); // 3.14
    * calc.floor(3.9); // 3
    */
-  floor: (num, precision = 0) => calculator.floor(num, precision),
+  floor: (num, precision) => calculator.floor(num, precision !== undefined ? precision : getGlobalConfig('precision.default', 10)),
   
   /**
    * 转换为百分比格式
@@ -1373,7 +1534,10 @@ const calc = {
    * @example
    * calc.setPrecision(4); // 设置全局精度为4位小数
    */
-  setPrecision: (precision) => calculator.setPrecision(precision),
+  setPrecision: (precision) => {
+    calculator.setPrecision(precision);
+    setGlobalConfig({ precision: { default: precision } });
+  },
   
   /**
    * 获取计算器实例
@@ -1384,6 +1548,33 @@ const calc = {
   getInstance: () => calculator,
   
   /**
+   * 获取原始计算器对象（不应用全局配置）
+   * @returns {object} 原始计算器对象
+   * @example
+   * const raw = calc.getRawCalc();
+   */
+  getRawCalc: () => rawCalc,
+  
+  /**
+   * 设置全局配置
+   * @param {object} config - 配置对象
+   * @returns {void}
+   * @example
+   * calc.setConfig({ precision: { default: 4 } });
+   */
+  setConfig: setGlobalConfig,
+  
+  /**
+   * 获取全局配置
+   * @param {string} [path] - 配置路径
+   * @param {*} [defaultValue] - 默认值
+   * @returns {*} 配置值
+   * @example
+   * calc.getConfig('precision.default'); // 10
+   */
+  getConfig: getGlobalConfig,
+  
+  /**
    * 创建链式调用实例
    * @param {number} [value=0] - 初始值，默认为0
    * @returns {ChainableCalculator} 链式计算器实例
@@ -1392,7 +1583,8 @@ const calc = {
    * calc.chain().add(0.1).add(0.2).toPercent(); // "30.00%"
    */
   chain: (value = 0) => new ChainableCalculator(value)
-};
+  };
+}
 
 // 尝试导入增强模块
 let EnhancedCalculator, ChainCalculator;
@@ -1417,85 +1609,90 @@ if (EnhancedCalculator) {
     }
 }
 
-// 新增功能（仅在增强模块可用时提供）
-function batch(input, operation) {
-    // 支持两种调用方式：
-    // 1. batch(expressions) - 表达式数组
-    // 2. batch(numbers, operation) - 数字数组和操作字符串
+// 批量计算函数 - 优先使用共享工具函数
+const batch = (function() {
+    if (typeof utilsBatch === 'function') {
+        // 创建包装函数来正确调用 utilsBatch
+        return function(input, operation, precision) {
+            return utilsBatch(input, operation, precision, calculator, getGlobalConfigRef());
+        };
+    }
     
-    if (arguments.length === 1) {
-        // 第一种方式：表达式数组
-        const expressions = input;
-        if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
-            return enhancedInstance.batch(expressions);
-        }
-        return calculator.calculateBatch(expressions);
-    } else if (arguments.length === 2) {
-        // 第二种方式：数字数组和操作字符串
-        const numbers = input;
-        if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
-            return enhancedInstance.batch(numbers, operation);
-        }
-        
-        // 如果没有增强模块，使用基础实现
-        const results = [];
-        for (let i = 0; i < numbers.length; i++) {
-            try {
-                let result;
-                switch (operation) {
-                    case 'sqrt':
-                        result = calculator.sqrt(numbers[i]);
-                        break;
-                    case 'square':
-                        result = calculator.multiply(numbers[i], numbers[i]);
-                        break;
-                    case 'abs':
-                        result = calculator.abs(numbers[i]);
-                        break;
-                    case 'round':
-                        result = calculator.round(numbers[i]);
-                        break;
-                    case 'ceil':
-                        result = calculator.ceil(numbers[i]);
-                        break;
-                    case 'floor':
-                        result = calculator.floor(numbers[i]);
-                        break;
-                    default:
-                        throw new Error(`不支持的批量操作: ${operation}`);
-                }
-                results.push(result);
-            } catch (error) {
-                results.push(null);
+    // 后备实现
+    return function(input, operation, precision) {
+        // 支持两种调用方式：
+        // 1. batch(expressions) - 表达式数组
+        // 2. batch(numbers, operation, precision) - 数字数组和操作字符串
+        if (arguments.length === 1) {
+            // 第一种方式：表达式数组
+            const expressions = input;
+            if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
+                return enhancedInstance.batch(expressions);
             }
+            const tempCalc = new PrecisionCalculator();
+            return tempCalc.calculateBatch(expressions);
+        } else if (arguments.length >= 2) {
+            // 第二种方式：数字数组和操作字符串
+            const numbers = input;
+            if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
+                return enhancedInstance.batch(numbers, operation, precision);
+            }
+            
+            // 如果没有增强模块，使用基础实现
+            const results = [];
+            for (let i = 0; i < numbers.length; i++) {
+                try {
+                    let result;
+                    switch (operation) {
+                        case 'sqrt':
+                            result = calc.sqrt(numbers[i]);
+                            if (precision !== undefined) {
+                                result = calc.round(result, precision);
+                            } else {
+                                result = calc.format(result, globalConfig.precision.default);
+                            }
+                            break;
+                        case 'square':
+                            result = calc.multiply(numbers[i], numbers[i]);
+                            if (precision !== undefined) {
+                                result = calc.round(result, precision);
+                            } else {
+                                result = calc.format(result, globalConfig.precision.default);
+                            }
+                            break;
+                        case 'abs':
+                            result = calc.abs(numbers[i]);
+                            if (precision !== undefined) {
+                                result = calc.round(result, precision);
+                            } else {
+                                result = calc.format(result, globalConfig.precision.default);
+                            }
+                            break;
+                        case 'round':
+                            result = calc.round(numbers[i], precision !== undefined ? precision : globalConfig.precision.default);
+                            break;
+                        case 'ceil':
+                            result = calc.ceil(numbers[i], precision !== undefined ? precision : globalConfig.precision.default);
+                            break;
+                        case 'floor':
+                            result = calc.floor(numbers[i], precision !== undefined ? precision : globalConfig.precision.default);
+                            break;
+                        default:
+                            throw new Error(`不支持的批量操作: ${operation}`);
+                    }
+                    results.push(result);
+                } catch (error) {
+                    results.push(null);
+                }
+            }
+            return results;
+        } else {
+            throw new Error('batch函数参数错误');
         }
-        return results;
-    } else {
-        throw new Error('batch函数参数错误');
-    }
-}
+    };
+})();
 
-function getPerformanceMetrics() {
-    if (enhancedInstance && typeof enhancedInstance.getPerformanceMetrics === 'function') {
-        return enhancedInstance.getPerformanceMetrics();
-    }
-    return { message: '性能监控功能需要增强模块支持' };
-}
-
-function clearCache() {
-    if (enhancedInstance && typeof enhancedInstance.clearCache === 'function') {
-        enhancedInstance.clearCache();
-        return true;
-    }
-    return false;
-}
-
-function getCacheStats() {
-    if (enhancedInstance && typeof enhancedInstance.getCacheStats === 'function') {
-        return enhancedInstance.getCacheStats();
-    }
-    return { message: '缓存统计功能需要增强模块支持' };
-}
+// 性能监控和缓存管理函数已从共享模块导入
 
 // 配置管理（如果可用）
 function setConfig(config) {
@@ -1503,24 +1700,20 @@ function setConfig(config) {
         enhancedInstance.config.setConfig(config);
         return true;
     }
-    return false;
+    // 回退到全局配置
+    setGlobalConfig(config);
+    return true;
 }
 
 function getConfig(path, defaultValue) {
     if (enhancedInstance && enhancedInstance.config && typeof enhancedInstance.config.get === 'function') {
         return enhancedInstance.config.get(path, defaultValue);
     }
-    return defaultValue;
+    // 回退到全局配置
+    return getGlobalConfig(path, defaultValue);
 }
 
-// 国际化支持（如果可用）
-function setLocale(locale) {
-    if (enhancedInstance && enhancedInstance.i18n && typeof enhancedInstance.i18n.setLocale === 'function') {
-        enhancedInstance.i18n.setLocale(locale);
-        return true;
-    }
-    return false;
-}
+// 国际化支持函数已从共享模块导入
 
 // 使用示例
 if (typeof module !== 'undefined' && module.exports) {
@@ -1529,6 +1722,7 @@ if (typeof module !== 'undefined' && module.exports) {
     PrecisionCalculator, 
     ChainableCalculator, 
     calc,
+    rawCalc,
     EnhancedCalculator,
     ChainCalculator,
     batch,
@@ -1538,6 +1732,8 @@ if (typeof module !== 'undefined' && module.exports) {
     setConfig,
     getConfig,
     setLocale,
+    setGlobalConfig,
+    getGlobalConfig,
     getInstance: () => enhancedInstance,
     version: '1.1.0',
     features: {
@@ -1553,6 +1749,7 @@ if (typeof module !== 'undefined' && module.exports) {
   window.PrecisionCalculator = PrecisionCalculator;
   window.ChainableCalculator = ChainableCalculator;
   window.calc = calc;
+  window.rawCalc = rawCalc;
   window.EnhancedCalculator = EnhancedCalculator;
   window.ChainCalculator = ChainCalculator;
   window.PrecisionCalculatorUtils = {
@@ -1563,6 +1760,8 @@ if (typeof module !== 'undefined' && module.exports) {
     setConfig,
     getConfig,
     setLocale,
+    setGlobalConfig,
+    getGlobalConfig,
     getInstance: () => enhancedInstance,
     version: '1.1.0',
     features: {
@@ -1574,96 +1773,3 @@ if (typeof module !== 'undefined' && module.exports) {
     }
   };
 }
-
-/* 使用示例：
-
-// 基础运算
-console.log(calc.add(0.1, 0.2)); // 0.3 (而不是 0.30000000000000004)
-console.log(calc.multiply(0.1, 3)); // 0.3 (而不是 0.30000000000000004)
-
-// 公式计算
-console.log(calc.calculate('0.1 + 0.2')); // 0.3
-console.log(calc.calculate('0.1 * 3')); // 0.3
-console.log(calc.calculate('-5 + 3')); // -2
-console.log(calc.calculate('-(5 + 3) * 2')); // -16
-console.log(calc.calculate('10 / 3 + 0.1')); // 3.4333333333
-
-// 复杂公式
-console.log(calc.calculate('(0.1 + 0.2) * 3 - 0.5')); // 0.4
-console.log(calc.calculate('-10 + 5 * 2')); // 0
-
-// 批量计算
-const results = calc.batch([
-  '0.1 + 0.2',
-  '0.1 * 3',
-  '10 / 3'
-]);
-console.log(results); // [0.3, 0.3, 3.3333333333]
-
-// 设置精度
-calc.setPrecision(2);
-console.log(calc.format(10/3)); // 3.33
-
-// 数值取整和舍入
-console.log(calc.round(10.345, 2)); // 10.35
-console.log(calc.ceil(10.342, 2)); // 10.35
-console.log(calc.floor(10.348, 2)); // 10.34
-
-// 百分比格式化
-console.log(calc.toPercent(0.1256)); // 12.56%
-console.log(calc.toPercent(0.1256, 1)); // 12.6%
-console.log(calc.toPercent(0.1256, 0)); // 13%
-console.log(calc.toPercent(0.1256, 2, false)); // 12.56
-
-// 货币格式化
-console.log(calc.toCurrency(1234.5)); // ¥1,234.50
-console.log(calc.toCurrency(1234.5, '$')); // $1,234.50
-console.log(calc.toCurrency(1234.5, '€', 0)); // €1,235
-console.log(calc.toCurrency(1234.5, '¥', 2, false)); // ¥1234.50
-
-// 链式调用示例
-console.log(calc.chain(10).add(5).multiply(2).subtract(3).valueOf()); // 27
-console.log(calc.chain(0.1).add(0.2).multiply(3).round(2).valueOf()); // 0.9
-console.log(calc.chain(1234.567).round(2).toCurrency('$')); // $1,234.57
-console.log(calc.chain(0.1256).multiply(100).round(1).toPercent(1)); // 12.6%
-
-// 复杂链式调用
-const result = calc.chain(100)
-  .multiply(0.1)     // 10
-  .add(5.5)          // 15.5
-  .divide(2)         // 7.75
-  .round(1)          // 7.8
-  .valueOf();
-console.log(result); // 7.8
-
-// 链式调用 + 格式化
-const formatted = calc.chain(1000)
-  .multiply(1.08)    // 应用8%税率
-  .round(2)          // 四舍五入到2位小数
-  .toCurrency('$');  // 格式化为美元
-console.log(formatted); // $1,080.00
-
-// 单位格式化
-console.log(calc.toUnit(123.456, 'kg')); // 123.46kg
-console.log(calc.toUnit(123.456, 'm²', 1)); // 123.5m²
-console.log(calc.toUnit(0.912, 'L', 3)); // 0.912L
-
-// 大数字格式化
-console.log(calc.toReadable(1234)); // 1.2千
-console.log(calc.toReadable(12345)); // 1.2万
-console.log(calc.toReadable(12345678)); // 1.2千万
-console.log(calc.toReadable(1234567890)); // 12.3亿
-console.log(calc.toReadable(1234, 1, 'en')); // 1.2K
-console.log(calc.toReadable(1234567, 2, 'en')); // 1.23M
-
-// 科学计数法
-console.log(calc.toScientific(123456)); // 1.23e+5
-console.log(calc.toScientific(0.00012345, 3)); // 1.235e-4
-
-// 分数格式化
-console.log(calc.toFraction(0.5)); // 1/2
-console.log(calc.toFraction(1.25)); // 1 1/4
-console.log(calc.toFraction(3.333333)); // 3 1/3
-console.log(calc.toFraction(Math.PI, 1000)); // 3 22/7
-
-*/
