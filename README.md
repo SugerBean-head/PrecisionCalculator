@@ -9,6 +9,20 @@
 npm install mathfix
 ```
 
+### 包信息
+- **包名**: `mathfix`
+- **当前版本**: `1.1.2`
+- **许可证**: MIT
+- **Node.js 要求**: >= 12.0.0
+- **包大小**: 轻量级，无外部依赖
+
+### 包含文件
+- `mathfix.js` - CommonJS 版本
+- `mathfix.mjs` - ES 模块版本
+- `mathfix.d.ts` - TypeScript 类型定义
+- `index.html` - 浏览器演示页面
+- `README.md` - 完整文档
+
 ### 直接下载
 下载 `mathfix.js` 文件直接使用。
 
@@ -38,30 +52,53 @@ npm install mathfix
 ## 🚀 快速开始
 
 ### ES模块导入 (推荐)
+
+在现代前端项目（如 Vue、React）或 Node.js 中，推荐使用 ES 模块导入。
+
 ```javascript
-// 命名导入 - 最常用的方式
-import { PrecisionCalculator, calc, ChainableCalculator } from 'mathfix';
-
-// 默认导入
-import precisionCalc from 'mathfix';
-
-// 混合导入
-import defaultExport, { calc, batch } from 'mathfix';
-
-// 命名空间导入
-import * as PC from 'mathfix';
-
-// 重命名导入
-import { 
-  PrecisionCalculator as Calculator, 
-  calc as mathCalc 
-} from 'mathfix';
+// 导入核心计算对象
+import { calc } from 'mathfix';
 
 // 基础运算
 console.log(calc.add(0.1, 0.2));        // 0.3
 console.log(calc.subtract(0.3, 0.1));   // 0.2
 console.log(calc.multiply(0.2, 3));     // 0.6
 console.log(calc.divide(0.3, 0.1));     // 3
+
+// 处理无限循环小数
+console.log(calc.divide(1, 3));         // 0.3333333333333333
+// 使用 format 或 round 控制精度
+console.log(calc.format(calc.divide(1, 3), 2)); // "0.33"
+console.log(calc.round(calc.divide(1, 3), 4));  // 0.3333
+
+// 也可以导入其他模块
+import { PrecisionCalculator, ChainableCalculator } from 'mathfix';
+```
+
+### 多种导入方式支持
+```javascript
+// 方式1: 命名导入 (推荐)
+import { calc, PrecisionCalculator, batch } from 'mathfix';
+
+// 方式2: 默认导入
+import precisionCalc from 'mathfix';
+const calculator = new precisionCalc.PrecisionCalculator();
+
+// 方式3: 混合导入
+import defaultExport, { ChainableCalculator } from 'mathfix';
+
+// 方式4: 命名空间导入
+import * as PC from 'mathfix';
+const calc = new PC.PrecisionCalculator();
+
+// 方式5: 重命名导入
+import { 
+  PrecisionCalculator as Calculator, 
+  calc as mathCalc 
+} from 'mathfix';
+
+// 方式6: 动态导入
+const { PrecisionCalculator } = await import('mathfix');
 ```
 
 ### CommonJS 导入
@@ -169,6 +206,21 @@ const calculator = new PrecisionCalculator(4);
 const precise: number = calculator.add(0.1, 0.2);
 ```
 
+#### TypeScript 配置
+项目包含完整的 TypeScript 支持：
+
+- **类型定义文件**: `mathfix.d.ts` 提供完整的类型声明
+- **TypeScript 示例**: `example.ts` 展示所有功能的类型安全用法
+- **配置文件**: `tsconfig.json` 包含推荐的编译配置
+- **编译命令**: `npx tsc example.ts && node example.js`
+
+支持的 TypeScript 特性：
+- 严格类型检查
+- 智能代码补全
+- 编译时错误检测
+- ES2018+ 语法支持
+- 装饰器支持
+
 ### 浏览器环境
 ```html
 <script src="mathfix.js"></script>
@@ -180,6 +232,19 @@ const precise: number = calculator.add(0.1, 0.2);
     const result = calc.chain(100).add(50).multiply(1.08).valueOf();
 </script>
 ```
+
+#### 浏览器演示页面
+项目包含一个完整的浏览器演示页面 `index.html`，提供以下功能：
+
+- **基础运算测试**: 交互式测试加减乘除运算
+- **公式计算器**: 支持复杂数学表达式计算
+- **批量计算演示**: 多个表达式同时计算
+- **数据格式化工具**: 百分比、货币、单位等格式化
+- **链式调用演示**: 可视化链式计算过程
+- **数学函数测试**: 开方、幂运算、阶乘等
+- **精度对比**: 原生JavaScript vs 精度计算对比
+
+直接在浏览器中打开 `index.html` 即可体验所有功能。
 
 ## 文件结构
 
@@ -224,6 +289,32 @@ npm test
 npm run test:enhanced
 ```
 
+增强测试套件 (`src/tests/enhanced-test.js`) 提供：
+
+- **全面的功能测试**: 基础运算、边界条件、数学函数
+- **性能基准测试**: 多种算法的性能对比
+- **错误处理测试**: 异常情况和边界值测试
+- **覆盖率统计**: 代码覆盖率分析
+- **断言工具**: 专业的测试断言库
+- **测试报告**: 详细的测试结果和性能指标
+
+测试功能包括：
+```javascript
+// 使用增强测试套件
+const { EnhancedTestSuite, BenchmarkTester, Assert } = require('mathfix');
+
+const suite = new EnhancedTestSuite();
+const benchmark = new BenchmarkTester();
+
+// 运行基准测试
+benchmark.benchmark('加法性能', () => {
+  calc.add(Math.random(), Math.random());
+}, 10000);
+
+// 断言测试
+Assert.assertAlmostEqual(calc.add(0.1, 0.2), 0.3, 1e-10);
+```
+
 ### TypeScript 支持
 
 本库提供完整的 TypeScript 类型定义。如需使用 TypeScript 相关功能，请先安装 TypeScript 编译器：
@@ -252,14 +343,63 @@ npm run type-check
 npm run benchmark
 ```
 
-### 其他脚本
+性能基准测试提供：
 
-```bash
-npm run build      # 构建项目
-npm run lint       # 代码检查
-npm run coverage   # 覆盖率报告
-npm run docs       # 生成文档
+- **算法性能对比**: 不同算法实现的性能测试
+- **内存使用分析**: 内存占用和泄漏检测
+- **缓存效率测试**: 缓存命中率和性能提升分析
+- **并发性能测试**: 多线程和异步操作性能
+- **基准报告**: 详细的性能指标和优化建议
+
+基准测试示例：
+```javascript
+const { BenchmarkTester } = require('mathfix');
+const benchmark = new BenchmarkTester();
+
+// 性能测试
+const result = benchmark.benchmark('复杂计算', () => {
+  calc.chain(Math.random())
+    .multiply(100)
+    .add(50)
+    .divide(3)
+    .round(2)
+    .valueOf();
+}, 10000);
+
+console.log(`平均时间: ${result.avg}ms`);
+console.log(`P95延迟: ${result.p95}ms`);
+console.log(`吞吐量: ${result.throughput} ops/sec`);
 ```
+
+### 开发脚本
+
+#### 测试相关
+```bash
+npm test                # 运行基础测试套件
+npm run test:enhanced   # 运行增强测试套件
+npm run benchmark       # 性能基准测试
+```
+
+#### 示例和演示
+```bash
+npm run example         # 运行 JavaScript 示例
+npm run ts-example      # 运行 TypeScript 示例
+```
+
+#### 构建和质量
+```bash
+npm run build          # 构建项目 (JavaScript 无需编译)
+npm run lint           # 代码风格检查
+npm run coverage       # 生成测试覆盖率报告
+npm run docs           # 生成 API 文档
+```
+
+#### 开发环境
+项目支持多种开发环境：
+- **Node.js**: 直接运行 `.js` 和 `.mjs` 文件
+- **TypeScript**: 使用 `tsconfig.json` 配置编译
+- **浏览器**: 打开 `index.html` 进行测试
+- **ES 模块**: 支持现代 JavaScript 模块系统
 
 ### 启动演示页面
 ```bash
@@ -949,18 +1089,40 @@ const config = {
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/mathfix.git
+git clone https://github.com/developer/mathfix.git
 cd mathfix
 
-# 安装依赖（如果有）
+# 安装依赖 (可选，项目无外部依赖)
 npm install
 
 # 运行测试
 npm test
 npm run test:enhanced
 
-# 运行基准测试
+# 运行示例
+npm run example
+npm run ts-example
+```
+
+### 代码规范
+- 遵循现有代码风格
+- 添加适当的注释和文档
+- 确保所有测试通过
+- 更新相关的类型定义
+- 保持向后兼容性
+
+### 发布流程
+```bash
+# 更新版本号
+npm version patch|minor|major
+
+# 运行完整测试
+npm test
+npm run test:enhanced
 npm run benchmark
+
+# 发布到 NPM
+npm publish
 ```
 
 ## 📄 许可证

@@ -174,6 +174,11 @@ class ChainableCalculator {
     return this;
   }
 
+  format(precision) {
+    this.value = this.calculator.format(this.value, precision);
+    return this;
+  }
+
   toPercent(precision = 2, withSymbol = true) {
     return this.calculator.toPercent(this.value, precision, withSymbol);
   }

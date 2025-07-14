@@ -502,6 +502,35 @@ class PrecisionCalculator {
   }
 
   /**
+   * 平方
+   * @param {number|string} n - 输入数
+   * @param {number} precision - 精度
+   * @returns {number} 计算结果
+   */
+  @logOperation
+  square(n, precision = null) {
+    try {
+      const actualPrecision = precision !== null ? precision : this.config.get('precision.default', 10);
+      
+      Validator.validateNumber(n);
+      Validator.validatePrecision(actualPrecision);
+      
+      return this.executeWithCache('square', [n, actualPrecision], () => {
+        const numN = Number(n);
+        
+        if (!isFinite(numN)) {
+          throw new NumberRangeError(this.i18n.getErrorMessage('numberRange', [n]));
+        }
+        
+        // 使用multiply方法确保精度
+        return this.multiply(numN, numN, actualPrecision);
+      });
+    } catch (error) {
+      return this.handleError(error, 'square', [n, precision]);
+    }
+  }
+
+  /**
    * 绝对值
    * @param {number|string} n - 输入数
    * @param {number} precision - 精度
@@ -667,6 +696,9 @@ class PrecisionCalculator {
             case 'sqrt':
               result = this.sqrt(numbers[i], precision);
               break;
+            case 'square':
+              result = this.square(numbers[i], precision);
+              break;
             case 'abs':
               result = this.abs(numbers[i], precision);
               break;
@@ -675,6 +707,12 @@ class PrecisionCalculator {
               break;
             case 'factorial':
               result = this.factorial(numbers[i]);
+              break;
+            case 'ceil':
+              result = this.ceil(numbers[i], precision || 0);
+              break;
+            case 'floor':
+              result = this.floor(numbers[i], precision || 0);
               break;
             default:
               throw new InvalidInputError(`不支持的批量操作: ${operation}`);
@@ -796,6 +834,15 @@ class ChainCalculator {
    */
   sqrt() {
     this.value = this.calculator.sqrt(this.value, this.precision);
+    return this;
+  }
+
+  /**
+   * 平方
+   * @returns {ChainCalculator} 链式计算器实例
+   */
+  square() {
+    this.value = this.calculator.square(this.value, this.precision);
     return this;
   }
 

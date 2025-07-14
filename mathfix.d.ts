@@ -148,6 +148,7 @@ export interface CalcInterface {
   // 表达式计算
   calculate(expression: string): number;
   batch(expressions: string[]): number[];
+  batch(numbers: (number | string)[], operation: string, precision?: number): (number | null)[];
 
   // 格式化
   format(num: number, precision?: number): number;
@@ -288,6 +289,7 @@ export declare class EnhancedCalculator {
   multiply(a: number | string, b: number | string, precision?: number): number;
   divide(a: number | string, b: number | string, precision?: number): number;
   power(base: number | string, exponent: number | string, precision?: number): number;
+  square(n: number | string, precision?: number): number;
   sqrt(n: number | string, precision?: number): number;
   factorial(n: number | string): number;
   abs(n: number | string, precision?: number): number;
@@ -321,6 +323,7 @@ export declare class ChainCalculator {
   multiply(value: number | string): ChainCalculator;
   divide(value: number | string): ChainCalculator;
   power(exponent: number | string): ChainCalculator;
+  square(): ChainCalculator;
   sqrt(): ChainCalculator;
   abs(): ChainCalculator;
   round(precision?: number): ChainCalculator;
@@ -365,6 +368,7 @@ export interface Features {
 }
 
 // 全局函数声明
+export declare function batch(expressions: string[]): number[];
 export declare function batch(numbers: (number | string)[], operation: string, precision?: number): (number | null)[];
 export declare function getPerformanceMetrics(): PerformanceMetrics;
 export declare function clearCache(): boolean;

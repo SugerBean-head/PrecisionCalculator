@@ -1000,14 +1000,15 @@ class ChainableCalculator {
   }
 
   /**
-   * 格式化数字，保留指定小数位数
+   * 格式化数字，保留指定小数位数（链式调用）
    * @param {number} precision - 小数位数
-   * @returns {number} 格式化后的数字
+   * @returns {ChainableCalculator} 返回自身以支持链式调用
    * @example
-   * calc.chain(10.345678).format(2); // 10.35
+   * calc.chain(10.345678).format(2).valueOf(); // 10.35
    */
   format(precision) {
-    return this.calculator.format(this.value, precision);
+    this.value = this.calculator.format(this.value, precision);
+    return this;
   }
 
   /**
@@ -1417,11 +1418,61 @@ if (EnhancedCalculator) {
 }
 
 // 新增功能（仅在增强模块可用时提供）
-function batch(expressions) {
-    if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
-        return enhancedInstance.batch(expressions);
+function batch(input, operation) {
+    // 支持两种调用方式：
+    // 1. batch(expressions) - 表达式数组
+    // 2. batch(numbers, operation) - 数字数组和操作字符串
+    
+    if (arguments.length === 1) {
+        // 第一种方式：表达式数组
+        const expressions = input;
+        if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
+            return enhancedInstance.batch(expressions);
+        }
+        return calculator.calculateBatch(expressions);
+    } else if (arguments.length === 2) {
+        // 第二种方式：数字数组和操作字符串
+        const numbers = input;
+        if (enhancedInstance && typeof enhancedInstance.batch === 'function') {
+            return enhancedInstance.batch(numbers, operation);
+        }
+        
+        // 如果没有增强模块，使用基础实现
+        const results = [];
+        for (let i = 0; i < numbers.length; i++) {
+            try {
+                let result;
+                switch (operation) {
+                    case 'sqrt':
+                        result = calculator.sqrt(numbers[i]);
+                        break;
+                    case 'square':
+                        result = calculator.multiply(numbers[i], numbers[i]);
+                        break;
+                    case 'abs':
+                        result = calculator.abs(numbers[i]);
+                        break;
+                    case 'round':
+                        result = calculator.round(numbers[i]);
+                        break;
+                    case 'ceil':
+                        result = calculator.ceil(numbers[i]);
+                        break;
+                    case 'floor':
+                        result = calculator.floor(numbers[i]);
+                        break;
+                    default:
+                        throw new Error(`不支持的批量操作: ${operation}`);
+                }
+                results.push(result);
+            } catch (error) {
+                results.push(null);
+            }
+        }
+        return results;
+    } else {
+        throw new Error('batch函数参数错误');
     }
-    return calculator.calculateBatch(expressions);
 }
 
 function getPerformanceMetrics() {
