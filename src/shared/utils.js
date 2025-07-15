@@ -168,13 +168,7 @@ function setLocale() {
   return false;
 }
 
-/**
- * 获取实例（占位符）
- * @returns {null} 空值
- */
-function getInstance() {
-  return null;
-}
+// getInstance函数已移除，不再需要
 
 /**
  * 版本信息
@@ -203,7 +197,6 @@ if (typeof module !== 'undefined' && module.exports) {
     clearCache,
     getCacheStats,
     setLocale,
-    getInstance,
     version,
     features
   };
@@ -218,7 +211,6 @@ if (typeof module !== 'undefined' && module.exports) {
       clearCache,
       getCacheStats,
       setLocale,
-      getInstance,
       version,
       features
     };
@@ -234,7 +226,6 @@ if (typeof exports !== 'undefined') {
   exports.clearCache = clearCache;
   exports.getCacheStats = getCacheStats;
   exports.setLocale = setLocale;
-  exports.getInstance = getInstance;
   exports.version = version;
   exports.features = features;
 }
