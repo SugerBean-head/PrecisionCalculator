@@ -2,6 +2,25 @@
 
 一个专门解决 JavaScript 浮点数精度问题的数学计算库，提供精确的数学运算和丰富的高级数学函数。
 
+## 目录
+
+- [特性](#特性)
+- [安装](#安装)
+- [快速开始](#快速开始)
+- [API 文档](#api-文档)
+  - [基础运算](#基础运算)
+  - [高级数学函数](#高级数学函数)
+  - [数组统计函数](#数组统计函数)
+  - [数学工具函数](#数学工具函数)
+- [全局配置](#全局配置)
+- [链式调用](#链式调用)
+- [工具函数](#工具函数)
+- [浏览器使用](#浏览器使用)
+- [TypeScript 支持](#typescript-支持)
+- [为什么选择 MathFix](#为什么选择-mathfix)
+- [许可证](#许可证)
+- [贡献](#贡献)
+
 ## 特性
 
 - ✅ **精确计算**：完全解决 JavaScript 浮点数精度问题
@@ -162,7 +181,118 @@ MathFix.ceil(3.14);           // 4
 MathFix.floor(3.14);          // 3
 ```
 
-## 链式调用
+## 全局配置
+
+MathFix 支持全局配置，可以设置默认的小数位数和千分位分隔符。
+
+### 配置选项
+
+```javascript
+// 获取当前配置
+const config = MathFix.getConfig();
+console.log(config);
+// {
+//   defaultPrecision: 2,           // 默认小数位数
+//   thousandsSeparator: false,     // 是否启用千分位分隔符
+//   thousandsSeparatorChar: ',',   // 千分位分隔符字符
+//   decimalSeparator: '.'          // 小数点字符
+// }
+
+// 设置配置
+MathFix.setConfig({
+  defaultPrecision: 4,           // 设置默认保留4位小数
+  thousandsSeparator: true,      // 启用千分位分隔符
+  thousandsSeparatorChar: ',',   // 使用逗号作为千分位分隔符
+  decimalSeparator: '.'          // 使用点作为小数点
+});
+```
+
+### 默认精度配置
+
+```javascript
+// 设置默认精度为3位小数
+MathFix.setConfig({ defaultPrecision: 3 });
+
+// round函数会使用默认精度
+MathFix.round(3.14159);        // 3.142 (使用默认精度3)
+MathFix.round(3.14159, 2);     // 3.14 (显式指定精度2)
+```
+
+### 千分位分隔符配置
+
+```javascript
+// 启用千分位分隔符
+MathFix.setConfig({ 
+  thousandsSeparator: true,
+  defaultPrecision: 2 
+});
+
+// format函数会使用全局配置
+MathFix.format(1234567.89);    // "1,234,567.89"
+
+// 可以通过options参数覆盖全局配置
+MathFix.format(1234567.89, { 
+  precision: 4,                 // 覆盖默认精度
+  thousandsSeparator: false     // 覆盖千分位设置
+}); // "1234567.89"
+```
+
+### 自定义分隔符
+
+```javascript
+// 使用空格作为千分位分隔符，逗号作为小数点
+MathFix.setConfig({
+  thousandsSeparator: true,
+  thousandsSeparatorChar: ' ',   // 空格分隔
+  decimalSeparator: ','          // 逗号小数点
+});
+
+MathFix.format(1234567.89);     // "1 234 567,89"
+```
+
+### 千分位分隔符工具函数
+
+```javascript
+// 直接为数字字符串添加千分位分隔符
+MathFix.addThousandsSeparator("1234567.89");  // "1,234,567.89"
+MathFix.addThousandsSeparator("1000000");     // "1,000,000"
+```
+
+### 在链式调用中使用配置
+
+```javascript
+// 设置全局配置
+MathFix.setConfig({ 
+  thousandsSeparator: true,
+  defaultPrecision: 2 
+});
+
+// 链式调用会使用全局配置
+const result = MathFix.chain(1000)
+  .multiply(1234.567)
+  .add(89.123)
+  .round()                      // 使用默认精度2
+  .valueOf();                   // 1234656.12
+
+// 在链式调用中格式化
+const formatted = MathFix.chain(1000)
+  .multiply(1234.567)
+  .add(89.123)
+  .format({ precision: 3, thousandsSeparator: true })
+  .toString();                  // "1,234,656.123"
+```
+
+### ES Module 中的配置
+
+```javascript
+import { setConfig, getConfig, format } from './mathfix.mjs';
+
+// 设置配置
+setConfig({ defaultPrecision: 4, thousandsSeparator: true });
+
+// 使用配置
+const result = format(1234567.89);  // "1,234,567.89"
+```
 
 MathFix 支持现代化的链式调用语法，让复杂的数学计算更加直观和简洁。
 

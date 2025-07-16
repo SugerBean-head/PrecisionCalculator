@@ -1,10 +1,36 @@
 /**
- * 数学计算精度修复工具类型定义
- * 重新导出核心函数库的类型
+ * MathFix - JavaScript浮点数精度修复库类型定义
  */
 
-// 从核心模块导入类型定义
-export * from './mathfix-core';
+// 导入核心类型
+export {
+  MathFixConfig,
+  FormatOptions,
+  setConfig,
+  getConfig,
+  addThousandsSeparator
+} from './mathfix-core';
+
+// 重新导出核心函数类型
+export {
+  getDecimalPlaces,
+  add,
+  subtract,
+  multiply,
+  divide,
+  power,
+  sqrt,
+  percentage,
+  percentageChange,
+  average,
+  max,
+  min,
+  sum,
+  abs,
+  ceil,
+  floor,
+  compoundInterest
+} from './mathfix-core';
 
 // 兼容性：重新声明主要函数类型
 /**
@@ -49,7 +75,7 @@ export function divide(a: number, b: number): number;
 /**
  * 四舍五入到指定小数位数
  * @param num 数字
- * @param precision 保留的小数位数，默认为2
+ * @param precision 保留的小数位数，如果未指定则使用全局配置
  * @returns 四舍五入后的数字
  */
 export function round(num: number, precision?: number): number;
@@ -57,9 +83,10 @@ export function round(num: number, precision?: number): number;
 /**
  * 格式化数字，移除多余的小数位
  * @param num 数字
- * @returns 格式化后的数字
+ * @param options 格式化选项
+ * @returns 格式化后的数字或字符串
  */
-export function format(num: number): number;
+export function format(num: number, options?: FormatOptions): string | number;
 
 /**
  * 精确幂运算
@@ -170,7 +197,7 @@ export class MathFixChain {
   ceil(): MathFixChain;
   floor(): MathFixChain;
   round(precision?: number): MathFixChain;
-  format(): MathFixChain;
+  format(options?: FormatOptions): MathFixChain;
   
   valueOf(): number;
   toString(): string;
@@ -210,6 +237,12 @@ declare global {
       ceil: typeof ceil;
       floor: typeof floor;
       compoundInterest: typeof compoundInterest;
+      // 配置功能
+      setConfig: typeof setConfig;
+      getConfig: typeof getConfig;
+      addThousandsSeparator: typeof addThousandsSeparator;
+      
+      // 链式调用
       MathFixChain: typeof MathFixChain;
       chain: typeof chain;
     };

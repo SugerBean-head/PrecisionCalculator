@@ -5,6 +5,58 @@
  */
 
 /**
+ * 全局配置对象
+ */
+const config = {
+  // 默认小数位数
+  defaultPrecision: 2,
+  // 是否启用千分位分隔符
+  thousandsSeparator: false,
+  // 千分位分隔符字符
+  thousandsSeparatorChar: ',',
+  // 小数点字符
+  decimalSeparator: '.'
+};
+
+/**
+ * 设置全局配置
+ * @param {Object} options 配置选项
+ * @param {number} options.defaultPrecision 默认小数位数
+ * @param {boolean} options.thousandsSeparator 是否启用千分位分隔符
+ * @param {string} options.thousandsSeparatorChar 千分位分隔符字符
+ * @param {string} options.decimalSeparator 小数点字符
+ */
+export function setConfig(options) {
+  if (typeof options !== 'object' || options === null) {
+    throw new Error('配置选项必须是一个对象');
+  }
+  
+  if (typeof options.defaultPrecision === 'number' && options.defaultPrecision >= 0) {
+    config.defaultPrecision = Math.floor(options.defaultPrecision);
+  }
+  
+  if (typeof options.thousandsSeparator === 'boolean') {
+    config.thousandsSeparator = options.thousandsSeparator;
+  }
+  
+  if (typeof options.thousandsSeparatorChar === 'string') {
+    config.thousandsSeparatorChar = options.thousandsSeparatorChar;
+  }
+  
+  if (typeof options.decimalSeparator === 'string') {
+    config.decimalSeparator = options.decimalSeparator;
+  }
+}
+
+/**
+ * 获取当前全局配置
+ * @returns {Object} 当前配置对象的副本
+ */
+export function getConfig() {
+  return { ...config };
+}
+
+/**
  * 获取数字的小数位数
  * @param {number} num 数字
  * @returns {number} 小数位数
@@ -84,21 +136,69 @@ export function divide(a, b) {
 /**
  * 四舍五入到指定小数位数
  * @param {number} num 数字
- * @param {number} precision 保留的小数位数
+ * @param {number} precision 保留的小数位数，如果未指定则使用全局配置
  * @returns {number} 四舍五入后的数字
  */
-export function round(num, precision = 2) {
-  const multiplier = Math.pow(10, precision);
+export function round(num, precision) {
+  const actualPrecision = precision !== undefined ? precision : config.defaultPrecision;
+  const multiplier = Math.pow(10, actualPrecision);
   return Math.round(num * multiplier) / multiplier;
 }
 
 /**
  * 格式化数字，移除多余的小数位
  * @param {number} num 数字
- * @returns {number} 格式化后的数字
+ * @param {Object} options 格式化选项
+ * @param {number} options.precision 小数位数，如果未指定则使用全局配置
+ * @param {boolean} options.thousandsSeparator 是否使用千分位分隔符，如果未指定则使用全局配置
+ * @returns {string|number} 格式化后的数字或字符串
  */
-export function format(num) {
-  return parseFloat(num.toPrecision(12));
+export function format(num, options = {}) {
+  // 如果没有传入选项，返回精度修复后的数字
+  if (Object.keys(options).length === 0 && !config.thousandsSeparator) {
+    return parseFloat(num.toPrecision(12));
+  }
+  
+  const precision = options.precision !== undefined ? options.precision : config.defaultPrecision;
+  const useThousandsSeparator = options.thousandsSeparator !== undefined ? 
+    options.thousandsSeparator : config.thousandsSeparator;
+  
+  // 先进行精度处理
+  let result = parseFloat(num.toPrecision(12));
+  
+  // 如果指定了精度，进行四舍五入
+  if (precision !== undefined) {
+    result = round(result, precision);
+  }
+  
+  // 如果不需要千分位分隔符，直接返回数字
+  if (!useThousandsSeparator) {
+    return result;
+  }
+  
+  // 转换为字符串并添加千分位分隔符
+  return addThousandsSeparator(result.toString());
+}
+
+/**
+ * 为数字字符串添加千分位分隔符
+ * @param {string} numStr 数字字符串
+ * @returns {string} 添加千分位分隔符后的字符串
+ */
+export function addThousandsSeparator(numStr) {
+  const parts = numStr.split('.');
+  const integerPart = parts[0];
+  const decimalPart = parts[1];
+  
+  // 为整数部分添加千分位分隔符
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, config.thousandsSeparatorChar);
+  
+  // 组合整数和小数部分
+  if (decimalPart) {
+    return formattedInteger + config.decimalSeparator + decimalPart;
+  } else {
+    return formattedInteger;
+  }
 }
 
 /**

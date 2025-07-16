@@ -1,29 +1,13 @@
 /**
- * 数学计算精度修复工具 (ES Module)
- * 解决JavaScript浮点数计算精度问题，如 0.1 + 0.2 = 0.30000000000000004
+ * MathFix - JavaScript浮点数精度修复库 (ES Module)
+ * 提供精确的数学运算，解决JavaScript浮点数计算精度问题
  */
 
-// 引入核心函数库
+// 导入核心函数
 import {
-  add,
-  subtract,
-  multiply,
-  divide,
-  round,
-  format,
-  getDecimalPlaces,
-  power,
-  sqrt,
-  percentage,
-  percentageChange,
-  average,
-  max,
-  min,
-  sum,
-  abs,
-  ceil,
-  floor,
-  compoundInterest
+  add, subtract, multiply, divide, round, format, getDecimalPlaces,
+  power, sqrt, percentage, percentageChange, average, max, min, sum,
+  abs, ceil, floor, compoundInterest, setConfig, getConfig, addThousandsSeparator
 } from './mathfix-core.mjs';
 
 /**
@@ -85,8 +69,10 @@ export class MathFixChain {
     return this;
   }
 
-  format() {
-    this.value = format(this.value);
+  format(options) {
+    const result = format(this.value, options);
+    // 如果format返回字符串，保持为字符串；如果返回数字，保持为数字
+    this.value = result;
     return this;
   }
 
@@ -96,7 +82,7 @@ export class MathFixChain {
   }
 
   toString() {
-    return this.value.toString();
+    return String(this.value);
   }
 
   // 静态方法：创建新的链式调用实例
@@ -128,7 +114,10 @@ export {
   abs,
   ceil,
   floor,
-  compoundInterest
+  compoundInterest,
+  setConfig,
+  getConfig,
+  addThousandsSeparator
 };
 
 // 默认导出包含所有方法的对象
@@ -152,6 +141,9 @@ export default {
   ceil,
   floor,
   compoundInterest,
+  setConfig,
+  getConfig,
+  addThousandsSeparator,
   MathFixChain,
   chain
 };

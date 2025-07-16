@@ -1,7 +1,40 @@
 /**
  * MathFix 核心函数库类型定义
- * 包含所有数学计算精度修复的核心函数类型
  */
+
+/**
+ * 全局配置选项
+ */
+export interface MathFixConfig {
+  /** 默认小数位数 */
+  defaultPrecision?: number;
+  /** 是否启用千分位分隔符 */
+  thousandsSeparator?: boolean;
+  /** 千分位分隔符字符 */
+  thousandsSeparatorChar?: string;
+  /** 小数点字符 */
+  decimalSeparator?: string;
+}
+
+/**
+ * 格式化选项
+ */
+export interface FormatOptions {
+  /** 小数位数 */
+  precision?: number;
+  /** 是否使用千分位分隔符 */
+  thousandsSeparator?: boolean;
+}
+
+/**
+ * 设置全局配置
+ */
+export function setConfig(options: MathFixConfig): void;
+
+/**
+ * 获取当前全局配置
+ */
+export function getConfig(): MathFixConfig;
 
 /**
  * 获取数字的小数位数
@@ -45,7 +78,7 @@ export function divide(a: number, b: number): number;
 /**
  * 四舍五入到指定小数位数
  * @param num 数字
- * @param precision 保留的小数位数，默认为2
+ * @param precision 保留的小数位数，如果未指定则使用全局配置
  * @returns 四舍五入后的数字
  */
 export function round(num: number, precision?: number): number;
@@ -53,9 +86,17 @@ export function round(num: number, precision?: number): number;
 /**
  * 格式化数字，移除多余的小数位
  * @param num 数字
- * @returns 格式化后的数字
+ * @param options 格式化选项
+ * @returns 格式化后的数字或字符串
  */
-export function format(num: number): number;
+export function format(num: number, options?: FormatOptions): string | number;
+
+/**
+ * 为数字字符串添加千分位分隔符
+ * @param numStr 数字字符串
+ * @returns 添加千分位分隔符后的字符串
+ */
+export function addThousandsSeparator(numStr: string): string;
 
 /**
  * 精确幂运算

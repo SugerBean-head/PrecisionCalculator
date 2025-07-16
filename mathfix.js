@@ -23,7 +23,10 @@ const {
   abs,
   ceil,
   floor,
-  compoundInterest
+  compoundInterest,
+  setConfig,
+  getConfig,
+  addThousandsSeparator
 } = require('./mathfix-core.js');
 
 /**
@@ -85,8 +88,10 @@ class MathFixChain {
     return this;
   }
 
-  format() {
-    this.value = format(this.value);
+  format(options) {
+    const result = format(this.value, options);
+    // 如果format返回字符串，保持为字符串；如果返回数字，保持为数字
+    this.value = result;
     return this;
   }
 
@@ -96,7 +101,7 @@ class MathFixChain {
   }
 
   toString() {
-    return this.value.toString();
+    return String(this.value);
   }
 
   // 静态方法：创建新的链式调用实例
@@ -127,6 +132,9 @@ module.exports = {
   ceil,
   floor,
   compoundInterest,
+  setConfig,
+  getConfig,
+  addThousandsSeparator,
   
   // 链式调用
   MathFixChain,
@@ -155,6 +163,9 @@ if (typeof window !== 'undefined') {
     ceil,
     floor,
     compoundInterest,
+    setConfig,
+    getConfig,
+    addThousandsSeparator,
     MathFixChain,
     chain: MathFixChain.chain
   };
