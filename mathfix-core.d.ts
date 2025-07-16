@@ -1,12 +1,8 @@
 /**
- * 数学计算精度修复工具类型定义
- * 重新导出核心函数库的类型
+ * MathFix 核心函数库类型定义
+ * 包含所有数学计算精度修复的核心函数类型
  */
 
-// 从核心模块导入类型定义
-export * from './mathfix-core';
-
-// 兼容性：重新声明主要函数类型
 /**
  * 获取数字的小数位数
  * @param num 数字
@@ -153,65 +149,32 @@ export function floor(num: number): number;
 export function compoundInterest(principal: number, rate: number, time: number, compound?: number): number;
 
 /**
- * 链式调用类
+ * 核心函数对象类型
  */
-export class MathFixChain {
-  value: number;
-  
-  constructor(value?: number);
-  
-  add(num: number): MathFixChain;
-  subtract(num: number): MathFixChain;
-  multiply(num: number): MathFixChain;
-  divide(num: number): MathFixChain;
-  power(exponent: number): MathFixChain;
-  sqrt(root?: number): MathFixChain;
-  abs(): MathFixChain;
-  ceil(): MathFixChain;
-  floor(): MathFixChain;
-  round(precision?: number): MathFixChain;
-  format(): MathFixChain;
-  
-  valueOf(): number;
-  toString(): string;
-  
-  static chain(value?: number): MathFixChain;
+export interface MathFixCore {
+  add: typeof add;
+  subtract: typeof subtract;
+  multiply: typeof multiply;
+  divide: typeof divide;
+  round: typeof round;
+  format: typeof format;
+  getDecimalPlaces: typeof getDecimalPlaces;
+  power: typeof power;
+  sqrt: typeof sqrt;
+  percentage: typeof percentage;
+  percentageChange: typeof percentageChange;
+  average: typeof average;
+  max: typeof max;
+  min: typeof min;
+  sum: typeof sum;
+  abs: typeof abs;
+  ceil: typeof ceil;
+  floor: typeof floor;
+  compoundInterest: typeof compoundInterest;
 }
 
 /**
- * 创建链式调用实例的便捷函数
- * @param value 初始值
- * @returns 链式调用实例
+ * 默认导出的核心函数对象
  */
-export function chain(value?: number): MathFixChain;
-
-/**
- * MathFix 工具对象（浏览器环境下的全局对象）
- */
-declare global {
-  interface Window {
-    MathFix: {
-      add: typeof add;
-      subtract: typeof subtract;
-      multiply: typeof multiply;
-      divide: typeof divide;
-      round: typeof round;
-      format: typeof format;
-      getDecimalPlaces: typeof getDecimalPlaces;
-      power: typeof power;
-      sqrt: typeof sqrt;
-      percentage: typeof percentage;
-      percentageChange: typeof percentageChange;
-      average: typeof average;
-      max: typeof max;
-      min: typeof min;
-      sum: typeof sum;
-      abs: typeof abs;
-      ceil: typeof ceil;
-      floor: typeof floor;
-      compoundInterest: typeof compoundInterest;
-      MathFixChain: typeof MathFixChain;
-      chain: typeof chain;
-    };
-  }
-}
+declare const mathFixCore: MathFixCore;
+export default mathFixCore;
