@@ -28,13 +28,36 @@ const config = {
 
 // 中文数字转换
 function toChineseNumber(num) {
+  // 参数处理：支持字符串数字和千分位格式
+  let processedNum = num;
+  
+  if (typeof num === 'string') {
+    // 移除千分位分隔符（逗号、空格等）
+    processedNum = num.replace(/[,\s]/g, '');
+    
+    // 验证是否为有效数字字符串
+    if (!/^-?\d*\.?\d*$/.test(processedNum)) {
+      throw new Error('无效的数字格式');
+    }
+    
+    // 转换为数字
+    processedNum = parseFloat(processedNum);
+    
+    // 检查是否为有效数字
+    if (isNaN(processedNum)) {
+      throw new Error('无法转换为有效数字');
+    }
+  } else if (typeof num !== 'number') {
+    throw new Error('参数必须是数字或数字字符串');
+  }
+  
   const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
   const units = ['', '十', '百', '千', '万', '十万', '百万', '千万', '亿'];
   
-  if (num === 0) return '零';
+  if (processedNum === 0) return '零';
   
-  const numStr = Math.abs(num).toString();
-  const isNegative = num < 0;
+  const numStr = Math.abs(processedNum).toString();
+  const isNegative = processedNum < 0;
   const parts = numStr.split('.');
   const integerPart = parts[0];
   const decimalPart = parts[1];
@@ -74,20 +97,43 @@ function toChineseNumber(num) {
 
 // 人民币大写转换函数
 function toChineseCapital(num) {
+  // 参数处理：支持字符串数字和千分位格式
+  let processedNum = num;
+  
+  if (typeof num === 'string') {
+    // 移除千分位分隔符（逗号、空格等）
+    processedNum = num.replace(/[,\s]/g, '');
+    
+    // 验证是否为有效数字字符串
+    if (!/^-?\d*\.?\d*$/.test(processedNum)) {
+      throw new Error('无效的数字格式');
+    }
+    
+    // 转换为数字
+    processedNum = parseFloat(processedNum);
+    
+    // 检查是否为有效数字
+    if (isNaN(processedNum)) {
+      throw new Error('无法转换为有效数字');
+    }
+  } else if (typeof num !== 'number') {
+    throw new Error('参数必须是数字或数字字符串');
+  }
+  
   const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
   const units = ['', '拾', '佰', '仟'];
   const bigUnits = ['', '万', '亿', '兆'];
   
-  if (num === 0) return '零元整';
-  if (num < 0) return '负' + toChineseCapital(-num);
+  if (processedNum === 0) return '零元整';
+  if (processedNum < 0) return '负' + toChineseCapital(-processedNum);
   
   // 处理超出范围的数字
-  if (num >= 1000000000000) {
+  if (processedNum >= 1000000000000) {
     throw new Error('数字过大，超出转换范围');
   }
   
   // 分离整数和小数部分
-  const parts = num.toString().split('.');
+  const parts = processedNum.toString().split('.');
   const integerPart = parseInt(parts[0]);
   const decimalPart = parts[1] || '';
   
