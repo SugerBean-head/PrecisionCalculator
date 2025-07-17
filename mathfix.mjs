@@ -7,7 +7,8 @@
 import {
   add, subtract, multiply, divide, round, format, getDecimalPlaces,
   power, sqrt, percentage, percentageChange, average, max, min, sum,
-  abs, ceil, floor, compoundInterest, setConfig, getConfig, addThousandsSeparator
+  abs, ceil, floor, compoundInterest, setConfig, getConfig, addThousandsSeparator,
+  toChineseNumber, toChineseCapital, addUnitAndFormat
 } from './mathfix-core.mjs';
 
 /**
@@ -117,7 +118,10 @@ export {
   compoundInterest,
   setConfig,
   getConfig,
-  addThousandsSeparator
+  addThousandsSeparator,
+  toChineseNumber,
+  toChineseCapital,
+  addUnitAndFormat
 };
 
 // 默认导出包含所有方法的对象
@@ -144,6 +148,9 @@ export default {
   setConfig,
   getConfig,
   addThousandsSeparator,
+  toChineseNumber,
+  toChineseCapital,
+  addUnitAndFormat,
   MathFixChain,
   chain
 };

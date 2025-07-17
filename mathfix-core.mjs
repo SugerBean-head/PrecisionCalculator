@@ -15,8 +15,199 @@ const config = {
   // 千分位分隔符字符
   thousandsSeparatorChar: ',',
   // 小数点字符
-  decimalSeparator: '.'
+  decimalSeparator: '.',
+  // 单位（如：元、$、%等）
+  unit: '',
+  // 单位位置：'prefix'（前缀）或 'suffix'（后缀）
+  unitPosition: 'suffix',
+  // 是否转换为大写（主要用于中文数字）
+  uppercase: false,
+  // 是否转换为中文数字
+  chineseNumber: false
 };
+
+// 中文数字转换
+function toChineseNumber(num) {
+  const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  const units = ['', '十', '百', '千', '万', '十万', '百万', '千万', '亿'];
+  
+  if (num === 0) return '零';
+  
+  const numStr = Math.abs(num).toString();
+  const isNegative = num < 0;
+  const parts = numStr.split('.');
+  const integerPart = parts[0];
+  const decimalPart = parts[1];
+  
+  let result = '';
+  
+  // 处理整数部分
+  if (integerPart && integerPart !== '0') {
+    const len = integerPart.length;
+    for (let i = 0; i < len; i++) {
+      const digit = parseInt(integerPart[i]);
+      const unitIndex = len - i - 1;
+      
+      if (digit !== 0) {
+        result += digits[digit];
+        if (unitIndex > 0) {
+          result += units[unitIndex];
+        }
+      } else if (result && i < len - 1 && parseInt(integerPart[i + 1]) !== 0) {
+        result += '零';
+      }
+    }
+  } else {
+    result = '零';
+  }
+  
+  // 处理小数部分
+  if (decimalPart) {
+    result += '点';
+    for (let i = 0; i < decimalPart.length; i++) {
+      result += digits[parseInt(decimalPart[i])];
+    }
+  }
+  
+  return isNegative ? '负' + result : result;
+}
+
+// 人民币大写转换函数
+function toChineseCapital(num) {
+  const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+  const units = ['', '拾', '佰', '仟'];
+  const bigUnits = ['', '万', '亿', '兆'];
+  
+  if (num === 0) return '零元整';
+  if (num < 0) return '负' + toChineseCapital(-num);
+  
+  // 处理超出范围的数字
+  if (num >= 1000000000000) {
+    throw new Error('数字过大，超出转换范围');
+  }
+  
+  // 分离整数和小数部分
+  const parts = num.toString().split('.');
+  const integerPart = parseInt(parts[0]);
+  const decimalPart = parts[1] || '';
+  
+  let result = '';
+  
+  // 处理整数部分
+  if (integerPart === 0) {
+    result = '零';
+  } else {
+    result = convertIntegerPart(integerPart, digits, units, bigUnits);
+  }
+  
+  result += '元';
+  
+  // 处理小数部分（角分）
+  if (decimalPart.length > 0) {
+    const jiao = decimalPart.length >= 1 ? parseInt(decimalPart[0]) : 0;
+    const fen = decimalPart.length >= 2 ? parseInt(decimalPart[1]) : 0;
+    
+    if (jiao === 0 && fen === 0) {
+      result += '整';
+    } else {
+      if (jiao > 0) {
+        result += digits[jiao] + '角';
+      } else if (fen > 0) {
+        result += '零';
+      }
+      
+      if (fen > 0) {
+        result += digits[fen] + '分';
+      }
+    }
+  } else {
+    result += '整';
+  }
+  
+  return result;
+}
+
+// 辅助函数：转换整数部分
+function convertIntegerPart(num, digits, units, bigUnits) {
+  if (num === 0) return '';
+  
+  let result = '';
+  let unitIndex = 0;
+  
+  while (num > 0) {
+    const section = num % 10000;
+    if (section > 0) {
+      let sectionStr = convertSection(section, digits, units);
+      if (unitIndex > 0) {
+        sectionStr += bigUnits[unitIndex];
+      }
+      result = sectionStr + result;
+    } else if (result && unitIndex > 0) {
+      // 处理中间的零
+      if (num > 0) {
+        result = '零' + result;
+      }
+    }
+    
+    num = Math.floor(num / 10000);
+    unitIndex++;
+  }
+  
+  return result;
+}
+
+// 辅助函数：转换四位数段
+function convertSection(num, digits, units) {
+  let result = '';
+  let needZero = false;
+  
+  for (let i = 3; i >= 0; i--) {
+    const digit = Math.floor(num / Math.pow(10, i)) % 10;
+    
+    if (digit > 0) {
+      if (needZero) {
+        result += '零';
+        needZero = false;
+      }
+      result += digits[digit];
+      if (i > 0) {
+        result += units[i];
+      }
+    } else if (result) {
+      needZero = true;
+    }
+  }
+  
+  return result;
+}
+
+// 添加单位和格式化处理
+function addUnitAndFormat(value, options = {}) {
+  const opts = { ...config, ...options };
+  let result = value.toString();
+  
+  // 转换为中文数字
+  if (opts.chineseNumber) {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    result = toChineseNumber(numValue);
+  }
+  
+  // 转换为大写（主要用于中文）
+  if (opts.uppercase && !opts.chineseNumber) {
+    result = result.toUpperCase();
+  }
+  
+  // 添加单位
+  if (opts.unit) {
+    if (opts.unitPosition === 'prefix') {
+      result = opts.unit + result;
+    } else {
+      result = result + opts.unit;
+    }
+  }
+  
+  return result;
+}
 
 /**
  * 设置全局配置
@@ -151,33 +342,72 @@ export function round(num, precision) {
  * @param {Object} options 格式化选项
  * @param {number} options.precision 小数位数，如果未指定则使用全局配置
  * @param {boolean} options.thousandsSeparator 是否使用千分位分隔符，如果未指定则使用全局配置
+ * @param {string} options.unit 单位，如果未指定则使用全局配置
+ * @param {string} options.unitPosition 单位位置，如果未指定则使用全局配置
+ * @param {boolean} options.uppercase 是否转换为大写，如果未指定则使用全局配置
+ * @param {boolean} options.chineseNumber 是否转换为中文数字，如果未指定则使用全局配置
  * @returns {string|number} 格式化后的数字或字符串
  */
 export function format(num, options = {}) {
-  // 如果没有传入选项，返回精度修复后的数字
-  if (Object.keys(options).length === 0 && !config.thousandsSeparator) {
+  // 合并全局配置和传入的选项
+  const opts = { ...config, ...options };
+  
+  // 如果没有任何格式化选项，返回精度修复后的数字
+  if (Object.keys(options).length === 0 && 
+      !opts.thousandsSeparator && 
+      !opts.unit && 
+      !opts.uppercase && 
+      !opts.chineseNumber &&
+      !opts.chineseCapital) {
     return parseFloat(num.toPrecision(12));
   }
-  
-  const precision = options.precision !== undefined ? options.precision : config.defaultPrecision;
-  const useThousandsSeparator = options.thousandsSeparator !== undefined ? 
-    options.thousandsSeparator : config.thousandsSeparator;
   
   // 先进行精度处理
   let result = parseFloat(num.toPrecision(12));
   
   // 如果指定了精度，进行四舍五入
-  if (precision !== undefined) {
-    result = round(result, precision);
+  if (opts.precision !== undefined) {
+    result = round(result, opts.precision);
   }
   
-  // 如果不需要千分位分隔符，直接返回数字
-  if (!useThousandsSeparator) {
+  // 如果需要转换为人民币大写
+  if (opts.chineseCapital) {
+    return toChineseCapital(result);
+  }
+  
+  // 如果需要转换为中文数字
+  if (opts.chineseNumber) {
+    return addUnitAndFormat(result, opts);
+  }
+  
+  // 转换为字符串
+  let resultStr = result.toString();
+  
+  // 添加千分位分隔符
+  if (opts.thousandsSeparator) {
+    resultStr = addThousandsSeparator(resultStr);
+  }
+  
+  // 转换为大写
+  if (opts.uppercase) {
+    resultStr = resultStr.toUpperCase();
+  }
+  
+  // 添加单位
+  if (opts.unit) {
+    if (opts.unitPosition === 'prefix') {
+      resultStr = opts.unit + resultStr;
+    } else {
+      resultStr = resultStr + opts.unit;
+    }
+  }
+  
+  // 如果没有进行任何字符串格式化，返回数字
+  if (!opts.thousandsSeparator && !opts.unit && !opts.uppercase) {
     return result;
   }
   
-  // 转换为字符串并添加千分位分隔符
-  return addThousandsSeparator(result.toString());
+  return resultStr;
 }
 
 /**
@@ -356,3 +586,10 @@ export function compoundInterest(principal, rate, time, compound = 1) {
   const compoundFactor = power(onePlusRate, totalPeriods);
   return multiply(principal, compoundFactor);
 }
+
+// 导出所有函数
+export {
+  toChineseNumber,
+  toChineseCapital,
+  addUnitAndFormat
+};

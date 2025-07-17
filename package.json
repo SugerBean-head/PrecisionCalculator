@@ -1,7 +1,7 @@
 {
   "name": "mathfix",
-  "version": "1.1.3",
-  "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，包含增强功能如配置管理、国际化、性能优化、日志记录等",
+  "version": "1.2.0",
+  "description": "一个高精度的JavaScript数学计算库，解决浮点数精度问题，支持单位格式化、中文数字转换、大写转换等功能",
   "main": "mathfix.js",
   "module": "mathfix.mjs",
   "types": "mathfix.d.ts",
@@ -33,9 +33,14 @@
     "javascript",
     "typescript",
     "arithmetic",
+    "unit",
+    "formatting",
+    "chinese-number",
+    "uppercase",
+    "currency",
+    "i18n",
     "enhanced",
     "performance",
-    "i18n",
     "logging",
     "config",
     "benchmark",
@@ -59,6 +64,7 @@
     "mathfix.mjs",
     "mathfix.d.ts",
     "README.md",
+    "CHANGELOG.md",
     "index.html"
   ]
 }

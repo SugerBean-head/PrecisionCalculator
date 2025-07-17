@@ -13,6 +13,11 @@
   - [数组统计函数](#数组统计函数)
   - [数学工具函数](#数学工具函数)
 - [全局配置](#全局配置)
+  - [单位和格式化功能](#单位和格式化功能)
+  - [中文数字转换功能](#中文数字转换功能)
+  - [人民币大写转换功能](#人民币大写转换功能)
+  - [单位和格式化工具函数](#单位和格式化工具函数)
+  - [全局单位配置](#全局单位配置)
 - [链式调用](#链式调用)
 - [工具函数](#工具函数)
 - [浏览器使用](#浏览器使用)
@@ -25,6 +30,10 @@
 
 - ✅ **精确计算**：完全解决 JavaScript 浮点数精度问题
 - ✅ **丰富功能**：提供基础运算、高级数学函数、统计函数等
+- ✅ **单位格式化**：支持货币、单位等格式化功能
+- ✅ **中文数字转换**：支持阿拉伯数字转中文数字
+- ✅ **人民币大写转换**：支持数字转人民币大写格式
+- ✅ **大写转换**：支持字符串大写转换功能
 - ✅ **链式调用**：支持现代化的链式调用语法
 - ✅ **TypeScript 支持**：完整的类型定义
 - ✅ **多模块格式**：支持 CommonJS 和 ES Module
@@ -65,6 +74,25 @@ import MathFix from 'mathfix/mathfix.mjs';
 import { add, subtract, multiply, divide } from 'mathfix/mathfix.mjs';
 
 const result = add(0.1, 0.2); // 0.3
+```
+
+### 单位和格式化功能
+
+```javascript
+// 单位格式化
+MathFix.format(1234.56, { unit: "元", unitPosition: "suffix" });   // "1234.56元"
+MathFix.format(1234.56, { unit: "$", unitPosition: "prefix" });    // "$1234.56"
+
+// 中文数字转换
+MathFix.toChineseNumber(1234);                                     // "一千二百三十四"
+MathFix.format(1234, { chineseNumber: true, unit: "元" });         // "一千二百三十四元"
+
+// 人民币大写转换
+MathFix.toChineseCapital(1234.56);                                 // "壹仟贰佰叁拾肆元伍角陆分"
+MathFix.format(1234.56, { chineseCapital: true });                 // "壹仟贰佰叁拾肆元伍角陆分"
+
+// 大写转换
+MathFix.format(1234.56, { uppercase: true, unit: "usd" });         // "1234.56USD"
 ```
 
 ## API 文档
@@ -181,6 +209,38 @@ MathFix.ceil(3.14);           // 4
 MathFix.floor(3.14);          // 3
 ```
 
+#### `toChineseNumber(num)` - 中文数字转换
+```javascript
+MathFix.toChineseNumber(1234);                                     // "一千二百三十四"
+MathFix.toChineseNumber(10203);                                    // "一万零二百零三"
+MathFix.toChineseNumber(50607);                                    // "五万零六百零七"
+```
+
+#### `toChineseCapital(num)` - 人民币大写转换
+```javascript
+MathFix.toChineseCapital(1234.56);                                 // "壹仟贰佰叁拾肆元伍角陆分"
+MathFix.toChineseCapital(10203.07);                                // "壹万零贰佰零叁元零角柒分"
+MathFix.toChineseCapital(0.05);                                    // "零元零角伍分"
+MathFix.toChineseCapital(1000000);                                 // "壹佰万元整"
+```
+
+#### `addUnitAndFormat(num, options)` - 单位和格式化
+```javascript
+// 复杂的格式化需求
+MathFix.addUnitAndFormat(1234, { 
+  chineseNumber: true, 
+  unit: "元", 
+  unitPosition: "suffix" 
+});                                                                 // "一千二百三十四元"
+
+MathFix.addUnitAndFormat(5678, { 
+  chineseNumber: true, 
+  uppercase: true, 
+  unit: "圆", 
+  unitPosition: "suffix" 
+});                                                                 // "五千六百七十八圆"
+```
+
 ## 全局配置
 
 MathFix 支持全局配置，可以设置默认的小数位数和千分位分隔符。
@@ -195,7 +255,11 @@ console.log(config);
 //   defaultPrecision: 2,           // 默认小数位数
 //   thousandsSeparator: false,     // 是否启用千分位分隔符
 //   thousandsSeparatorChar: ',',   // 千分位分隔符字符
-//   decimalSeparator: '.'          // 小数点字符
+//   decimalSeparator: '.',         // 小数点字符
+//   unit: '',                      // 单位
+//   unitPosition: 'suffix',        // 单位位置 ('prefix' | 'suffix')
+//   uppercase: false,              // 是否转换为大写
+//   chineseNumber: false           // 是否转换为中文数字
 // }
 
 // 设置配置
@@ -203,7 +267,11 @@ MathFix.setConfig({
   defaultPrecision: 4,           // 设置默认保留4位小数
   thousandsSeparator: true,      // 启用千分位分隔符
   thousandsSeparatorChar: ',',   // 使用逗号作为千分位分隔符
-  decimalSeparator: '.'          // 使用点作为小数点
+  decimalSeparator: '.',         // 使用点作为小数点
+  unit: '元',                    // 设置单位
+  unitPosition: 'suffix',        // 单位位置（后缀）
+  uppercase: false,              // 不转换为大写
+  chineseNumber: false           // 不转换为中文数字
 });
 ```
 
@@ -256,6 +324,120 @@ MathFix.format(1234567.89);     // "1 234 567,89"
 // 直接为数字字符串添加千分位分隔符
 MathFix.addThousandsSeparator("1234567.89");  // "1,234,567.89"
 MathFix.addThousandsSeparator("1000000");     // "1,000,000"
+```
+
+### 单位和格式化功能
+
+```javascript
+// 基础单位功能
+MathFix.format(1234.56, { unit: "元", unitPosition: "suffix" });   // "1234.56元"
+MathFix.format(1234.56, { unit: "$", unitPosition: "prefix" });    // "$1234.56"
+
+// 大写转换功能
+MathFix.format(1234.56, { uppercase: true });                      // "1234.56"
+MathFix.format(1234.56, { 
+  uppercase: true, 
+  unit: "usd", 
+  unitPosition: "suffix" 
+});                                                                 // "1234.56USD"
+
+// 组合功能
+MathFix.format(1234.56, { 
+  thousandsSeparator: true, 
+  unit: "元", 
+  unitPosition: "suffix" 
+});                                                                 // "1,234.56元"
+
+MathFix.format(1234.56, { 
+  thousandsSeparator: true, 
+  uppercase: true, 
+  unit: "usd", 
+  unitPosition: "prefix" 
+});                                                                 // "USD1,234.56"
+```
+
+### 中文数字转换功能
+
+```javascript
+// 中文数字转换
+MathFix.toChineseNumber(1234);                                     // "一千二百三十四"
+MathFix.toChineseNumber(10203);                                    // "一万零二百零三"
+MathFix.toChineseNumber(50607);                                    // "五万零六百零七"
+
+// 在format函数中使用中文数字
+MathFix.format(1234, { chineseNumber: true });                     // "一千二百三十四"
+MathFix.format(1234, { 
+  chineseNumber: true, 
+  unit: "元", 
+  unitPosition: "suffix" 
+});                                                                 // "一千二百三十四元"
+
+// 中文数字与大写组合
+MathFix.format(1234, { 
+  chineseNumber: true, 
+  uppercase: true, 
+  unit: "元", 
+  unitPosition: "suffix" 
+});                                                                 // "一千二百三十四元"
+```
+
+### 人民币大写转换功能
+
+```javascript
+// 人民币大写转换
+MathFix.toChineseCapital(1234.56);                                 // "壹仟贰佰叁拾肆元伍角陆分"
+MathFix.toChineseCapital(10203.07);                                // "壹万零贰佰零叁元零角柒分"
+MathFix.toChineseCapital(0.05);                                    // "零元零角伍分"
+MathFix.toChineseCapital(1000000);                                 // "壹佰万元整"
+
+// 在format函数中使用人民币大写
+MathFix.format(1234.56, { chineseCapital: true });                 // "壹仟贰佰叁拾肆元伍角陆分"
+MathFix.format(10203.07, { chineseCapital: true });                // "壹万零贰佰零叁元零角柒分"
+
+// 特殊情况处理
+MathFix.toChineseCapital(0);                                       // "零元整"
+MathFix.toChineseCapital(0.1);                                     // "零元壹角"
+MathFix.toChineseCapital(0.01);                                    // "零元零角壹分"
+```
+
+### 单位和格式化工具函数
+
+```javascript
+// addUnitAndFormat 函数用于复杂的格式化需求
+MathFix.addUnitAndFormat(1234, { 
+  chineseNumber: true, 
+  unit: "元", 
+  unitPosition: "suffix" 
+});                                                                 // "一千二百三十四元"
+
+MathFix.addUnitAndFormat(5678, { 
+  chineseNumber: true, 
+  uppercase: true, 
+  unit: "圆", 
+  unitPosition: "suffix" 
+});                                                                 // "五千六百七十八圆"
+```
+
+### 全局单位配置
+
+```javascript
+// 设置全局单位配置
+MathFix.setConfig({
+  unit: "¥",
+  unitPosition: "prefix",
+  uppercase: true,
+  thousandsSeparator: true
+});
+
+// 使用全局配置
+MathFix.format(1234.56);                                           // "¥1,234.56"
+
+// 覆盖全局配置
+MathFix.format(9876.54, { 
+  unit: "€", 
+  unitPosition: "suffix", 
+  uppercase: false 
+});                                                                 // "9,876.54€"
 ```
 
 ### 在链式调用中使用配置

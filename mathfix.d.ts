@@ -11,6 +11,50 @@ export {
   addThousandsSeparator
 } from './mathfix-core';
 
+/**
+ * 格式化选项接口
+ */
+export interface FormatOptions {
+  /** 小数位数 */
+  precision?: number;
+  /** 是否使用千分位分隔符 */
+  thousandsSeparator?: boolean;
+  /** 单位 */
+  unit?: string;
+  /** 单位位置 */
+  unitPosition?: 'prefix' | 'suffix';
+  /** 是否转换为大写 */
+  uppercase?: boolean;
+  /** 是否转换为中文数字 */
+  chineseNumber?: boolean;
+  /** 是否转换为人民币大写 */
+  chineseCapital?: boolean;
+}
+
+/**
+ * 全局配置接口
+ */
+export interface MathFixConfig {
+  /** 默认精度 */
+  defaultPrecision?: number;
+  /** 是否启用千分位分隔符 */
+  thousandsSeparator?: boolean;
+  /** 千分位分隔符字符 */
+  thousandsSeparatorChar?: string;
+  /** 小数点分隔符 */
+  decimalSeparator?: string;
+  /** 单位 */
+  unit?: string;
+  /** 单位位置 */
+  unitPosition?: 'prefix' | 'suffix';
+  /** 是否转换为大写 */
+  uppercase?: boolean;
+  /** 是否转换为中文数字 */
+  chineseNumber?: boolean;
+  /** 是否转换为人民币大写 */
+  chineseCapital?: boolean;
+}
+
 // 重新导出核心函数类型
 export {
   getDecimalPlaces,
@@ -180,6 +224,47 @@ export function floor(num: number): number;
 export function compoundInterest(principal: number, rate: number, time: number, compound?: number): number;
 
 /**
+ * 为数字字符串添加千分位分隔符
+ * @param numStr 数字字符串
+ * @returns 添加千分位分隔符后的字符串
+ */
+export function addThousandsSeparator(numStr: string): string;
+
+/**
+ * 设置全局配置
+ * @param newConfig 新的配置项
+ */
+export function setConfig(newConfig: Partial<MathFixConfig>): void;
+
+/**
+ * 获取当前全局配置
+ * @returns 当前配置
+ */
+export function getConfig(): MathFixConfig;
+
+/**
+ * 将数字转换为中文大写数字
+ * @param num 数字
+ * @returns 中文大写数字字符串
+ */
+export function toChineseNumber(num: number): string;
+
+/**
+ * 将数字转换为人民币大写
+ * @param num 数字
+ * @returns 人民币大写字符串
+ */
+export function toChineseCapital(num: number): string;
+
+/**
+ * 根据配置添加单位和格式化
+ * @param num 数字
+ * @param options 格式化选项
+ * @returns 格式化后的字符串
+ */
+export function addUnitAndFormat(num: number, options: Partial<MathFixConfig>): string;
+
+/**
  * 链式调用类
  */
 export class MathFixChain {
@@ -241,6 +326,9 @@ declare global {
       setConfig: typeof setConfig;
       getConfig: typeof getConfig;
       addThousandsSeparator: typeof addThousandsSeparator;
+      toChineseNumber: typeof toChineseNumber;
+      toChineseCapital: typeof toChineseCapital;
+      addUnitAndFormat: typeof addUnitAndFormat;
       
       // 链式调用
       MathFixChain: typeof MathFixChain;

@@ -26,7 +26,10 @@ const {
   compoundInterest,
   setConfig,
   getConfig,
-  addThousandsSeparator
+  addThousandsSeparator,
+  toChineseNumber,
+  toChineseCapital,
+  addUnitAndFormat
 } = require('./mathfix-core.js');
 
 /**
@@ -135,6 +138,9 @@ module.exports = {
   setConfig,
   getConfig,
   addThousandsSeparator,
+  toChineseNumber,
+  toChineseCapital,
+  addUnitAndFormat,
   
   // 链式调用
   MathFixChain,
@@ -166,6 +172,9 @@ if (typeof window !== 'undefined') {
     setConfig,
     getConfig,
     addThousandsSeparator,
+    toChineseNumber,
+    toChineseCapital,
+    addUnitAndFormat,
     MathFixChain,
     chain: MathFixChain.chain
   };

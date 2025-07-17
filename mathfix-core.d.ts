@@ -24,6 +24,16 @@ export interface FormatOptions {
   precision?: number;
   /** 是否使用千分位分隔符 */
   thousandsSeparator?: boolean;
+  /** 单位 */
+  unit?: string;
+  /** 单位位置 */
+  unitPosition?: 'prefix' | 'suffix';
+  /** 是否转换为大写 */
+  uppercase?: boolean;
+  /** 是否转换为中文数字 */
+  chineseNumber?: boolean;
+  /** 是否转换为人民币大写 */
+  chineseCapital?: boolean;
 }
 
 /**
@@ -188,6 +198,28 @@ export function floor(num: number): number;
  * @returns 复利后的金额
  */
 export function compoundInterest(principal: number, rate: number, time: number, compound?: number): number;
+
+/**
+ * 将数字转换为中文数字
+ * @param num 数字
+ * @returns 中文数字字符串
+ */
+export function toChineseNumber(num: number): string;
+
+/**
+ * 将数字转换为人民币大写
+ * @param num 数字
+ * @returns 人民币大写字符串
+ */
+export function toChineseCapital(num: number): string;
+
+/**
+ * 根据配置添加单位和格式化
+ * @param num 数字
+ * @param options 格式化选项
+ * @returns 格式化后的字符串
+ */
+export function addUnitAndFormat(num: number, options: Partial<MathFixConfig>): string;
 
 /**
  * 核心函数对象类型
